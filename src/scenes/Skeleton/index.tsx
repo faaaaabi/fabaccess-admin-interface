@@ -31,11 +31,15 @@ import Places from "../Places";
 import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
-import logo from "../../logo.svg"
+import logo from "../../logo.svg";
+// import { useSnackbar } from 'notistack';
+
 
 const Skeleton: React.FC = () => {
     const classes = style();
     const [open, setOpen] = React.useState(true);
+    // const { enqueueSnackbar } = useSnackbar();
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -81,7 +85,7 @@ const Skeleton: React.FC = () => {
                     open={open}
                 >
                     <div className={classes.toolbarIcon}>
-                        <img src={logo} alt="FabAccess-Logo" />
+                        <img src={logo} alt="FabAccess-Logo"/>
                         <IconButton onClick={handleDrawerClose}>
                             <ChevronLeftIcon/>
                         </IconButton>
