@@ -22,6 +22,7 @@ const style = makeStyles(theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+        backgroundColor: '#59804E'
     },
     appBarShift: {
         marginLeft: drawerWidth,
