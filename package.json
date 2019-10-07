@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "author": "Fabian Meyer <f@bian-meyer.de>",
   "private": true,
+  "engines": {
+    "node": ">=12.11.1"
+  },
   "dependencies": {
     "@material-ui/core": "^4.5.0",
     "@material-ui/icons": "^4.4.3",
