@@ -1,5 +1,18 @@
 # FabAccess Admin Interface
 
+## Setup Node.js
+
+Node.js >= 12.11.1 is recommended
+
+Either use prebuild packages: https://nodejs.org/en/download/current/
+
+Or the Node Version Manager (nvm): https://github.com/nvm-sh/nvm
+
+## Install dependencies
+
+To install all dependencies defined in `package.json`, run following command
+
+### `npm install`
 
 ## Available Scripts
 
