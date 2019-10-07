@@ -19,6 +19,18 @@ import {BrowserRouter as Router, Route} from "react-router-dom";
 
 import {mainListItems, secondaryListItems} from './components/navigation';
 import style from "./style";
+import Dashboard from "../Dashboard";
+import Users from "../Users";
+import Permissions from "../Permissions";
+import {AppState} from "../../redux";
+import {useSelector} from "react-redux";
+import {NavigationState} from "../../redux/navigation/types";
+import Machines from "../Machines";
+import Actors from "../Actors";
+import Places from "../Places";
+import AccessDevices from "../AccessDevices";
+import Bookings from "../Bookings";
+import Settings from "../Settings";
 
 const Skeleton: React.FC = () => {
     const classes = style();
@@ -29,6 +41,8 @@ const Skeleton: React.FC = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    const navigationState: NavigationState = useSelector((appState: AppState) => appState.navigation);
 
     return (
         <Router>
@@ -46,7 +60,7 @@ const Skeleton: React.FC = () => {
                             <MenuIcon/>
                         </IconButton>
                         <Typography component="h1" variant="h6" color="inherit" noWrap={true} className={classes.title}>
-                            Dashboard
+                            {navigationState.pageTitle}
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -79,15 +93,15 @@ const Skeleton: React.FC = () => {
                     <div className={classes.appBarSpacer}/>
                     <Container maxWidth="lg" className={classes.container}>
                         <Grid container={true} spacing={3}>
-                            <Route exact={true} path="/" component={() => <div>Dasboard</div>}/>
-                            <Route path="/users" component={() => <div>Benutzer</div>}/>
-                            <Route path="/userPermissions" component={() => <div>Berechtigungen</div>}/>
-                            <Route path="/actors" component={() => <div>Aktoren</div>}/>
-                            <Route path="/machines" component={() => <div>Maschinen</div>}/>
-                            <Route path="/places" component={() => <div>Orte</div>}/>
-                            <Route path="/accessDevices" component={() => <div>Zugriffsgeräte</div>}/>
-                            <Route path="/bookings" component={() => <div>Buchungen</div>}/>
-                            <Route path="/settings" component={() => <div>Einstellungen</div>}/>
+                            <Route exact={true} path="/" component={Dashboard}/>
+                            <Route path="/users" component={Users}/>
+                            <Route path="/userPermissions" component={Permissions}/>
+                            <Route path="/actors" component={Actors}/>
+                            <Route path="/machines" component={Machines}/>
+                            <Route path="/places" component={Places}/>
+                            <Route path="/accessDevices" component={AccessDevices}/>
+                            <Route path="/bookings" component={Bookings}/>
+                            <Route path="/settings" component={Settings}/>
                         </Grid>
                     </Container>
                 </main>
