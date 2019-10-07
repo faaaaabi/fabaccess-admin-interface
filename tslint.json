@@ -11,7 +11,9 @@
     "semicolon": false,
     "jsx-no-lambda": false
   },
-  "rules": {},
+  "rules": {
+    "jsx-no-lambda": false
+  },
   "rulesDirectory": [],
   "linterOptions": {
     "exclude": [
