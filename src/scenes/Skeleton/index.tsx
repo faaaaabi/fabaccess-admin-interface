@@ -31,6 +31,7 @@ import Places from "../Places";
 import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
+import logo from "../../logo.svg"
 
 const Skeleton: React.FC = () => {
     const classes = style();
@@ -80,6 +81,7 @@ const Skeleton: React.FC = () => {
                     open={open}
                 >
                     <div className={classes.toolbarIcon}>
+                        <img src={logo} alt="FabAccess-Logo" />
                         <IconButton onClick={handleDrawerClose}>
                             <ChevronLeftIcon/>
                         </IconButton>
