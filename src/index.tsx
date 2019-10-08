@@ -7,6 +7,8 @@ import 'typeface-roboto';
 import {Provider} from "react-redux";
 import {rootReducer} from "./redux"
 import {compose, createStore} from 'redux';
+import fabbAccessTheme from "./theme/fabbAccessTheme";
+import {MuiThemeProvider} from "@material-ui/core";
 
 declare global {
     interface Window {
@@ -18,7 +20,7 @@ const store = createStore(rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('root'));
+ReactDOM.render(<MuiThemeProvider theme={fabbAccessTheme}><Provider store={store}><App/></Provider></MuiThemeProvider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

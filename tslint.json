@@ -12,7 +12,8 @@
     "jsx-no-lambda": false
   },
   "rules": {
-    "jsx-no-lambda": false
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false
   },
   "rulesDirectory": [],
   "linterOptions": {
