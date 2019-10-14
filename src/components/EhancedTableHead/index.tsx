@@ -15,7 +15,7 @@ const EnhancedTableHead: React.FC<Props> = (props: Props) => {
                 <TableCell padding="checkbox">
                     <Checkbox
                         indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={numSelected === rowCount}
+                        checked={(numSelected === rowCount) && numSelected > 0 && rowCount > 0}
                         onChange={onSelectAllClick}
                         inputProps={{'aria-label': 'select all desserts'}}
                     />

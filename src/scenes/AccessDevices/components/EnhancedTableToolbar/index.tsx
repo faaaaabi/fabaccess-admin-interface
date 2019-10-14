@@ -66,7 +66,12 @@ const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
                     </Tooltip>
                 ) : (
                     <Tooltip title="Filter list">
-                        <Button variant="contained" color="primary" className={classes.button}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={(event: React.SyntheticEvent<HTMLElement>) => {props.addFunction(event) }}
+                        >
                             Anlegen
                         </Button>
                     </Tooltip>

@@ -32,13 +32,12 @@ import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
 import logo from "../../logo.svg";
-// import { useSnackbar } from 'notistack';
+
 
 
 const Skeleton: React.FC = () => {
     const classes = style();
     const [open, setOpen] = React.useState(true);
-    // const { enqueueSnackbar } = useSnackbar();
 
     const handleDrawerOpen = () => {
         setOpen(true);
