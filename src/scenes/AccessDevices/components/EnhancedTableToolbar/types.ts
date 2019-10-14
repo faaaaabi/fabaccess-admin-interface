@@ -1,5 +1,6 @@
 type Props = {
-    numSelected: number
+    numSelected: number,
+    deleteFunction: Function
 }
 
 export default Props;

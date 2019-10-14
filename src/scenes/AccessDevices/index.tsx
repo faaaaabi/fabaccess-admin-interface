@@ -56,7 +56,7 @@ const AccessDevices: React.FC = () => {
     const classes = useStyles();
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
-    const [selected, setSelected] = React.useState<(string | undefined)[]>([]);
+    const [selected, setSelected] = React.useState<(string)[]>([]);
     const [page, setPage] = React.useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [accessDevices, setAccessDevices] = React.useState<AccessDevice[]>([]);
@@ -68,6 +68,15 @@ const AccessDevices: React.FC = () => {
 
     const accessDeviceService = new AccessDeviceService();
 
+    const fetchAccessDevicesToState = async () => {
+        const accessDevices =  await accessDeviceService.getAllAccessDevices();
+        setAccessDevices(accessDevices);
+    };
+
+    useEffect(() => {
+        console.log('selectedItems:', selected);
+    }, [selected]);
+
     useEffect(() => {
         const setPageTitle = (pageTitle: string) => {
             dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
@@ -76,11 +85,7 @@ const AccessDevices: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const fetchData = () => {
-            const accessDevices = accessDeviceService.getAllAccessDevices()
-            setAccessDevices(accessDevices);
-        };
-        fetchData();
+        fetchAccessDevicesToState();
     }, []);
 
     const headCells = [
@@ -105,12 +110,12 @@ const AccessDevices: React.FC = () => {
         setSelected([]);
     };
 
-    const handleClick = (event: React.SyntheticEvent, name: string) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected: (string | undefined)[] = [];
+    const handleClick = (event: React.SyntheticEvent, id: string) => {
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: string[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -135,14 +140,20 @@ const AccessDevices: React.FC = () => {
         setPage(0);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, accessDevices.length - page * rowsPerPage);
+
+    const deleteAccessDevice = async (accessDeviceId: string | string[]): Promise<void> => {
+        await accessDeviceService.deleteAccessDevices(accessDeviceId);
+        await fetchAccessDevicesToState();
+        setSelected([]);
+    };
 
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length}/>
+                <EnhancedTableToolbar numSelected={selected.length} deleteFunction={() => {deleteAccessDevice(selected)}}/>
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -163,7 +174,7 @@ const AccessDevices: React.FC = () => {
                             {stableSort(accessDevices, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((accessDevice: any, index: number) => {
-                                    const isItemSelected = isSelected(accessDevice.name);
+                                    const isItemSelected = isSelected(accessDevice.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -179,7 +190,7 @@ const AccessDevices: React.FC = () => {
                                                 <Checkbox
                                                     checked={isItemSelected}
                                                     inputProps={{'aria-labelledby': labelId}}
-                                                    onClick={event => handleClick(event, accessDevice.name)}
+                                                    onClick={event => handleClick(event, accessDevice.id)}
                                                 />
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
@@ -188,12 +199,15 @@ const AccessDevices: React.FC = () => {
                                             <TableCell align="left">{accessDevice.apiKey}</TableCell>
                                             <TableCell align="left">
                                                 <IconButton aria-label="delete" onClick={() => console.log('edited')}>
-                                                    <EditIcon />
+                                                    <EditIcon/>
                                                 </IconButton>
-                                                <IconButton className={classes.button} aria-label="delete" onClick={() => console.log('deleted')}>
-                                                    <DeleteIcon />
+                                                <IconButton
+                                                    className={classes.button}
+                                                    aria-label="delete"
+                                                    onClick={() => {deleteAccessDevice(accessDevice.id)}}
+                                                >
+                                                    <DeleteIcon/>
                                                 </IconButton>
-
                                             </TableCell>
                                         </TableRow>
                                     );

@@ -59,7 +59,7 @@ const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
             <div className={classes.spacer} />
             <div className={classes.actions}>
                 {numSelected > 0 ? (
-                    <Tooltip title="Delete">
+                    <Tooltip title="Delete" onClick={() => props.deleteFunction()}>
                         <IconButton aria-label="delete">
                             <DeleteIcon />
                         </IconButton>

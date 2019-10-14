@@ -9,6 +9,16 @@ import {rootReducer} from "./redux"
 import {compose, createStore} from 'redux';
 import fabbAccessTheme from "./theme/fabbAccessTheme";
 import {MuiThemeProvider} from "@material-ui/core";
+import * as localForage from "localforage";
+
+localForage.config({
+    driver      : localForage.INDEXEDDB, // Force WebSQL; same as using setDriver()
+    name        : 'fabbacces_clickdummy',
+    version     : 1.0,
+    size        : 4980736, // Size of database, in bytes. WebSQL-only for now.
+    storeName   : 'appData', // Should be alphanumeric, with underscores.
+    description : 'dummy storage for the fab access app'
+});
 
 declare global {
     interface Window {
