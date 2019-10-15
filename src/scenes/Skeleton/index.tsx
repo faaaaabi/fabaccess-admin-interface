@@ -84,7 +84,7 @@ const Skeleton: React.FC = () => {
                     open={open}
                 >
                     <div className={classes.toolbarIcon}>
-                        <img src={logo} alt="FabAccess-Logo"/>
+                        <img className={classes.logo} src={logo} alt="FabAccess-Logo"/>
                         <IconButton onClick={handleDrawerClose}>
                             <ChevronLeftIcon/>
                         </IconButton>

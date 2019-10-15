@@ -79,6 +79,9 @@ const style = makeStyles(theme => ({
     fixedHeight: {
         height: 240,
     },
+    logo: {
+        width: '75%'
+    }
 }));
 
 
