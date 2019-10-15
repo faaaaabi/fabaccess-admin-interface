@@ -24,7 +24,7 @@ export default function AddAccessDeviceDialog(props: Props) {
     let accessDeviceToEditName = '';
     let accessDeviceId = '';
 
-    if(props.accessDeviceToEdit) {
+    if (props.accessDeviceToEdit) {
         accessDeviceToEditName = props.accessDeviceToEdit.name;
         accessDeviceId = props.accessDeviceToEdit.id;
     }
@@ -33,7 +33,7 @@ export default function AddAccessDeviceDialog(props: Props) {
 
     useEffect(() => {
         setAccessDeviceName(accessDeviceToEditName);
-    },[accessDeviceToEditName]);
+    }, [accessDeviceToEditName]);
 
     const handleFormChange = (event: React.SyntheticEvent) => {
         event.persist();
@@ -44,6 +44,10 @@ export default function AddAccessDeviceDialog(props: Props) {
     const clearFormValues = () => {
         setAccessDeviceName('')
     };
+
+    const isFormValid = () => {
+        return accessDeviceName !== '';
+    }
 
     const handleAdd = async () => {
         try {
@@ -72,10 +76,24 @@ export default function AddAccessDeviceDialog(props: Props) {
         props.onClose();
     };
 
+    const submitOnEnterPressed = (event: React.KeyboardEvent, mode: 'add' | 'edit') => {
+        if (event.key === 'Enter' && isFormValid()) {
+            event.preventDefault();
+            if(mode === 'add') {
+                handleAdd();
+            } else {
+                handleEdit();
+            }
+        }
+    }
+
     return (
         <div>
-            <Dialog open={props.isOpen} onClose={(event: React.SyntheticEvent<HTMLElement>) => {props.onClose(event) }} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">{props.mode === 'add' ? 'Zugrifssgerät anlegen' : 'Zugrifssgerät ändern'}</DialogTitle>
+            <Dialog open={props.isOpen} onClose={(event: React.SyntheticEvent<HTMLElement>) => {
+                props.onClose(event)
+            }} aria-labelledby="form-dialog-title">
+                <DialogTitle
+                    id="form-dialog-title">{props.mode === 'add' ? 'Zugrifssgerät anlegen' : 'Zugrifssgerät ändern'}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         {props.mode === 'add'
@@ -94,6 +112,7 @@ export default function AddAccessDeviceDialog(props: Props) {
                         fullWidth={true}
                         required={true}
                         onChange={(event) => handleFormChange(event)}
+                        onKeyPress={(event) => submitOnEnterPressed(event, props.mode)}
                         inputProps={{
                             maxLength: 32,
                         }}
@@ -101,13 +120,15 @@ export default function AddAccessDeviceDialog(props: Props) {
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(event: React.SyntheticEvent<HTMLElement>) => {handleClose()}}
+                        onClick={(event: React.SyntheticEvent<HTMLElement>) => {
+                            handleClose()
+                        }}
                         color="primary"
                     >
                         Abbrechen
                     </Button>
                     <Button
-                        disabled={accessDeviceName === ''}
+                        disabled={!isFormValid()}
                         onClick={props.mode === 'add' ? handleAdd : handleEdit}
                         color="primary"
                     >
