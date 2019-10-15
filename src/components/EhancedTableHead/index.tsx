@@ -27,19 +27,22 @@ const EnhancedTableHead: React.FC<Props> = (props: Props) => {
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={order}
-                            onClick={createSortHandler(headCell.id)}
-                            hideSortIcon={!headCell.isSortable}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <span className={classes.visuallyHidden}>
+                        {headCell.isSortable ? (
+                                <TableSortLabel
+                                    active={orderBy === headCell.id}
+                                    direction={order}
+                                    onClick={createSortHandler(headCell.id)}
+                                >
+                                    {headCell.label}
+                                    {orderBy === headCell.id ? (
+                                        <span className={classes.visuallyHidden}>
                                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </span>
-                            ) : null}
-                        </TableSortLabel>
+                                    ) : null}
+                                </TableSortLabel>
+                            )
+                            : headCell.label
+                        }
                     </TableCell>
                 ))}
             </TableRow>
