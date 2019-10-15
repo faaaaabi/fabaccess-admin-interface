@@ -34,7 +34,7 @@ const AccessDevices: React.FC = () => {
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);
     const [page, setPage] = React.useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [accessDevices, setAccessDevices] = React.useState<AccessDevice[]>([]);
     const [isAddAccessDeviceModalVisible, setIsAddAccessDeviceModalVisible] = React.useState<boolean>(false);
     const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
@@ -331,13 +331,15 @@ const AccessDevices: React.FC = () => {
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
-                        'aria-label': 'previous page',
+                        'aria-label': 'vorherige Seite',
                     }}
                     nextIconButtonProps={{
-                        'aria-label': 'next page',
+                        'aria-label': 'nächste Seite',
                     }}
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
+                    labelDisplayedRows={({from, to, count}) => `Von ${from} bis ${to} gesamt ${count}`}
+                    labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
             <AddAccessDeviceDialog
