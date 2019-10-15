@@ -94,6 +94,9 @@ export default function AddAccessDeviceDialog(props: Props) {
                         fullWidth={true}
                         required={true}
                         onChange={(event) => handleFormChange(event)}
+                        inputProps={{
+                            maxLength: 32,
+                        }}
                     />
                 </DialogContent>
                 <DialogActions>

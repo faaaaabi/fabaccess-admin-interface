@@ -2,8 +2,10 @@ import {AccessDevice} from "../scenes/AccessDevices/types";
 import * as localForage from "localforage";
 
 export class AccessDeviceService {
+    private dummyAccessDevices: AccessDevice[] = [];
+
     constructor() {
-        const dummyAccessDevices: AccessDevice[] = [
+        this.dummyAccessDevices = [
             {id: this.makeid(32), name: 'Access Device 2', apiKey: this.makeid(64)},
             {id: this.makeid(32), name: 'Access Device 1', apiKey: this.makeid(64)},
             {id: this.makeid(32), name: 'Access Device 3', apiKey: this.makeid(64)},
@@ -15,9 +17,6 @@ export class AccessDeviceService {
             {id: this.makeid(32), name: 'Access Device 9', apiKey: this.makeid(64)},
             {id: this.makeid(32), name: 'Access Device 10', apiKey: this.makeid(64)}
         ];
-
-
-        this.initiallySaveDummyAccessDevicesToLocalStorage(dummyAccessDevices);
     }
 
     private async initiallySaveDummyAccessDevicesToLocalStorage(dummyAccessDevices: AccessDevice[]): Promise<void> {
@@ -41,10 +40,10 @@ export class AccessDeviceService {
         const storedAccessDevices: AccessDevice[] = await localForage.getItem('accessDevices');
         if (storedAccessDevices !== null) {
             return storedAccessDevices;
+        } else {
+            this.initiallySaveDummyAccessDevicesToLocalStorage(this.dummyAccessDevices);
+            return this.dummyAccessDevices
         }
-
-        console.log('[AccessDeviceService.getAllAccessDevices] No stored access devices found');
-        return [];
     }
 
     async deleteAccessDevices(accessDeviceIds: string | string[]) {
@@ -55,7 +54,7 @@ export class AccessDeviceService {
 
         if (storedAccessDevices !== null) {
             if (Array.isArray(accessDeviceIds)) {
-                storedAccessDevices.filter(accessDevice => accessDevice.id)
+                storedAccessDevices.filter(accessDevice => accessDevice.id);
                 storedAccessDevicesWithoutDeleted = storedAccessDevices.filter(accessDevice => accessDeviceIds.indexOf(accessDevice.id) === -1);
             } else {
                 storedAccessDevicesWithoutDeleted = storedAccessDevices.filter(accessDevice => accessDevice.id !== accessDeviceIds);

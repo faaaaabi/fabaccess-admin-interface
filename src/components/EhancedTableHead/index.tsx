@@ -23,7 +23,7 @@ const EnhancedTableHead: React.FC<Props> = (props: Props) => {
                 {headCells.map(headCell => (
                     <TableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={headCell.align}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -31,6 +31,7 @@ const EnhancedTableHead: React.FC<Props> = (props: Props) => {
                             active={orderBy === headCell.id}
                             direction={order}
                             onClick={createSortHandler(headCell.id)}
+                            hideSortIcon={!headCell.isSortable}
                         >
                             {headCell.label}
                             {orderBy === headCell.id ? (

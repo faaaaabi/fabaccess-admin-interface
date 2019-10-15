@@ -1,18 +1,32 @@
 import React, {useEffect, useState} from "react";
 import {SET_PAGE_TITLE} from "../../redux/navigation/types";
 import {useDispatch} from "react-redux";
-import {Checkbox, IconButton, Paper, Table, TableBody, TableCell, TablePagination, TableRow} from "@material-ui/core";
+import {
+    Checkbox,
+    IconButton,
+    InputAdornment,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TablePagination,
+    TableRow,
+    TextField
+} from "@material-ui/core";
 import EnhancedTableToolbar from "./components/EnhancedTableToolbar";
 import EnhancedTableHead from "../../components/EhancedTableHead";
 import {getSorting, stableSort} from "./components/helperFunctions/sorting";
 import {AccessDeviceService} from "../../service/AccessDeviceService";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {AccessDevice, ConfirmationDialogState} from "./types";
 import AddAccessDeviceDialog from "./components/AddAccessDeviceDialog";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
+import {headCell} from "../../components/EhancedTableHead/types";
+import Clipboard from 'react-clipboard.js';
 
 const AccessDevices: React.FC = () => {
     const classes = useStyles();
@@ -23,11 +37,18 @@ const AccessDevices: React.FC = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [accessDevices, setAccessDevices] = React.useState<AccessDevice[]>([]);
     const [isAddAccessDeviceModalVisible, setIsAddAccessDeviceModalVisible] = React.useState<boolean>(false);
-    const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({heading: '', confirmationText: '', agreeAction: () => {}, disagreeAction: () => {}});
+    const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
+        heading: '',
+        confirmationText: '',
+        agreeAction: () => {
+        },
+        disagreeAction: () => {
+        }
+    });
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
     const [accessDeviceDialogMode, setAccessDeviceDialogMode] = useState<'add' | 'edit'>('add');
     const [accessDeviceToEdit, setAccessDeviceToEdit] = useState<AccessDevice | undefined>(undefined);
-    const { enqueueSnackbar } = useSnackbar();
+    const {enqueueSnackbar} = useSnackbar();
 
     new AccessDeviceService();
 
@@ -37,7 +58,7 @@ const AccessDevices: React.FC = () => {
     const accessDeviceService = new AccessDeviceService();
 
     const fetchAccessDevicesToState = async () => {
-        const accessDevices =  await accessDeviceService.getAllAccessDevices();
+        const accessDevices = await accessDeviceService.getAllAccessDevices();
         setAccessDevices(accessDevices);
     };
 
@@ -109,14 +130,14 @@ const AccessDevices: React.FC = () => {
     };
 
     const onAddAccessDeviceDialogSuccess = async () => {
-        enqueueSnackbar('Das Zugriffsgerät wurde erfolgreich angelegt', { variant: 'success' });
+        enqueueSnackbar('Das Zugriffsgerät wurde erfolgreich angelegt', {variant: 'success'});
         setIsAddAccessDeviceModalVisible(false);
         setAccessDeviceToEdit(undefined);
         await fetchAccessDevicesToState();
     };
 
     const onAddAccessDeviceDialogFailure = () => {
-        enqueueSnackbar('Fehler beim anlegen des Zugriffsgeräts', { variant: 'warning' });
+        enqueueSnackbar('Fehler beim anlegen des Zugriffsgeräts', {variant: 'warning'});
         setAccessDeviceToEdit(undefined);
         setIsAddAccessDeviceModalVisible(false);
     };
@@ -128,22 +149,31 @@ const AccessDevices: React.FC = () => {
     const handleDeviceDeletion = (accessDeviceId: string | string[]) => {
         deleteAccessDevice(accessDeviceId);
         setIsConfirmationDialogVisible(false);
-        enqueueSnackbar('Zugriffsgerät(e) wurden erfolgreich gelöscht', { variant: 'success' });
+        enqueueSnackbar('Zugriffsgerät(e) wurden erfolgreich gelöscht', {variant: 'success'});
     };
 
     const handleSingleDeviceDeletion = (accessDeviceId: string) => {
+        const accessDeviceToDeleteName = getAccessDeviceName(accessDevices, accessDeviceId);
         handleConfirmation('Zugriffsgerät wirklich löschen?',
-            'Möchten Sie das Zugriffsgerät wirklich löschen?',
+            `Möchtest Du das Zugriffsgerät "${accessDeviceToDeleteName}" wirklich löschen?`,
             () => handleDeviceDeletion(accessDeviceId),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
     };
 
-    const handleMultipleDeviceDeletion = (accessDeviceId: string[]) => {
+    const handleMultipleDeviceDeletion = (accessDeviceIdsToDelete: string[]) => {
+        let deviceNamesToDelete = '';
+        const areAllDevicesSelected = accessDeviceIdsToDelete.length === accessDevices.length;
+        deviceNamesToDelete = areAllDevicesSelected
+            ? 'ALLE'
+            : accessDevices.filter(accessDevice => accessDeviceIdsToDelete.indexOf(accessDevice.id) !== -1)
+                .map(accessDevice => accessDevice.name)
+                .join(', ');
+
         handleConfirmation('Zugriffsgeräte wirklich löschen?',
-            'Möchten Sie die markierten Zugriffsgeräte wirklich löschen?',
-            () => handleDeviceDeletion(accessDeviceId),
+            `Möchtest Du die Zugriffsgeräte ${deviceNamesToDelete} wirklich löschen?`,
+            () => handleDeviceDeletion(accessDeviceIdsToDelete),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
@@ -151,17 +181,35 @@ const AccessDevices: React.FC = () => {
 
     const handleOpenDeviceDialog = (mode: 'add' | 'edit', accessDeviceId?: string) => {
         setAccessDeviceDialogMode(mode);
-        if(accessDeviceId) {
+        if (accessDeviceId) {
             const accessDeviceToEdit: AccessDevice | undefined = accessDevices.find(accessDevice => accessDevice.id === accessDeviceId);
             setAccessDeviceToEdit(accessDeviceToEdit);
         }
         setIsAddAccessDeviceModalVisible(true);
     };
 
-    const headCells = [
-        {id: 'name', numeric: false, disablePadding: true, label: 'Name des Zugriffsgeräts'},
-        {id: 'apiKey', numeric: false, disablePadding: false, label: 'API Key'},
-        {id: 'actions', numeric: false, disablePadding: true, label: 'Aktionen'}
+
+    const onCopyToClipboardSuccess = (accessDeviceName: string) => {
+        enqueueSnackbar(`API Key von "${accessDeviceName}" wurde in die Zischenablage kopiert`, {variant: 'success'});
+    };
+
+    const getAccessDeviceName = (accessDevices: AccessDevice[], accessDeviceId: string) => {
+        const accessDeviceToDelete = accessDevices.find(accessDevice => accessDevice.id === accessDeviceId);
+        const accessDeviceToDeleteName: string = accessDeviceToDelete !== undefined ? accessDeviceToDelete.name : '';
+        return accessDeviceToDeleteName;
+    };
+
+    const headCells: headCell[] = [
+        {
+            id: 'name',
+            numeric: false,
+            disablePadding: true,
+            label: 'Name des Zugriffsgeräts',
+            isSortable: true,
+            align: 'left'
+        },
+        {id: 'apiKey', numeric: false, disablePadding: false, label: 'API Key', isSortable: false, align: 'left'},
+        {id: 'actions', numeric: false, disablePadding: true, label: 'Aktionen', isSortable: false, align: 'center'}
     ];
 
     return (
@@ -169,8 +217,12 @@ const AccessDevices: React.FC = () => {
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar
                     numSelected={selected.length}
-                    deleteFunction={() => {handleMultipleDeviceDeletion(selected)}}
-                    addFunction={() => {handleOpenDeviceDialog('add')}}
+                    deleteFunction={() => {
+                        handleMultipleDeviceDeletion(selected)
+                    }}
+                    addFunction={() => {
+                        handleOpenDeviceDialog('add')
+                    }}
                 />
                 <div className={classes.tableWrapper}>
                     <Table
@@ -201,7 +253,7 @@ const AccessDevices: React.FC = () => {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={accessDevice.name}
+                                            key={accessDevice.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -213,16 +265,50 @@ const AccessDevices: React.FC = () => {
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {accessDevice.name}
+
                                             </TableCell>
-                                            <TableCell align="left">{accessDevice.apiKey}</TableCell>
                                             <TableCell align="left">
-                                                <IconButton aria-label="delete" onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}>
+                                                <TextField type="password"
+                                                           variant="outlined"
+                                                           value={accessDevice.apiKey}
+                                                           disabled={true}
+                                                           fullWidth={false}
+                                                           InputProps={{
+                                                               style: {
+                                                                   fontSize: 14,
+                                                               },
+                                                               endAdornment: (
+                                                                   <InputAdornment position="end">
+                                                                       <Clipboard
+                                                                           data-clipboard-text={accessDevice.apiKey}
+                                                                           onSuccess={() => onCopyToClipboardSuccess(accessDevice.name)}
+                                                                           style={{
+                                                                               border: 'none',
+                                                                               backgroundColor: 'transparent'
+                                                                           }}
+                                                                       >
+                                                                           <IconButton
+                                                                               edge="end"
+                                                                               aria-label="Api Key in die Zwischenablage kopieren"
+                                                                           >
+                                                                               <FileCopyIcon fontSize='small'/>
+                                                                           </IconButton>
+                                                                       </Clipboard>
+                                                                   </InputAdornment>
+                                                               )
+                                                           }}/>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <IconButton aria-label="delete"
+                                                            onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}>
                                                     <EditIcon/>
                                                 </IconButton>
                                                 <IconButton
                                                     className={classes.button}
                                                     aria-label="delete"
-                                                    onClick={() => {handleSingleDeviceDeletion(accessDevice.id)}}
+                                                    onClick={() => {
+                                                        handleSingleDeviceDeletion(accessDevice.id)
+                                                    }}
                                                 >
                                                     <DeleteIcon/>
                                                 </IconButton>
@@ -260,7 +346,9 @@ const AccessDevices: React.FC = () => {
                 onDialogSuccess={onAddAccessDeviceDialogSuccess}
                 onDialogFailure={onAddAccessDeviceDialogFailure}
                 isOpen={isAddAccessDeviceModalVisible}
-                onClose={() => {setIsAddAccessDeviceModalVisible(false)}}
+                onClose={() => {
+                    setIsAddAccessDeviceModalVisible(false)
+                }}
             />
             <ConfirmationDialog
                 isOpen={isConfirmationDialogVisible}

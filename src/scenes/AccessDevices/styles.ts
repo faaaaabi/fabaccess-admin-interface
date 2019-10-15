@@ -29,6 +29,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     button: {
         margin: theme.spacing(0),
     },
+    apiKeyTextfield: {
+        fontSize: 14,
+    },
+    hiddenClipboardButton: {
+        border: 'none',
+        backgroundColor: 'transparent'
+    }
 }));
 
 export default useStyles;
