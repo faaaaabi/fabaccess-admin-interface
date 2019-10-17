@@ -34,7 +34,7 @@ const AccessDevices: React.FC = () => {
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);
     const [page, setPage] = React.useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(8);
     const [accessDevices, setAccessDevices] = React.useState<AccessDevice[]>([]);
     const [isAddAccessDeviceModalVisible, setIsAddAccessDeviceModalVisible] = React.useState<boolean>(false);
     const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
@@ -325,7 +325,7 @@ const AccessDevices: React.FC = () => {
                     </Table>
                 </div>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[8, 15, 25]}
                     component="div"
                     count={accessDevices.length}
                     rowsPerPage={rowsPerPage}
