@@ -52,7 +52,7 @@ const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
                     </Typography>
                 ) : (
                     <Typography variant="h6" id="tableTitle">
-                        Zugriffsgeräte
+                        {props.tableHeading}
                     </Typography>
                 )}
             </div>

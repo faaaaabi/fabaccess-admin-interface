@@ -21,7 +21,7 @@ import {mainListItems, secondaryListItems} from './components/navigation';
 import style from "./style";
 import Dashboard from "../Dashboard";
 import Users from "../Users";
-import Permissions from "../Permissions";
+import UserPermissions from "../Permissions";
 import {AppState} from "../../redux";
 import {useSelector} from "react-redux";
 import {NavigationState} from "../../redux/navigation/types";
@@ -32,7 +32,6 @@ import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
 import logo from "../../logo.svg";
-
 
 
 const Skeleton: React.FC = () => {
@@ -100,7 +99,7 @@ const Skeleton: React.FC = () => {
                         <Grid container={true} spacing={3}>
                             <Route exact={true} path="/" component={Dashboard}/>
                             <Route path="/users" component={Users}/>
-                            <Route path="/userPermissions" component={Permissions}/>
+                            <Route path="/userPermissions" component={UserPermissions}/>
                             <Route path="/actors" component={Actors}/>
                             <Route path="/machines" component={Machines}/>
                             <Route path="/places" component={Places}/>

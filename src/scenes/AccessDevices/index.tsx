@@ -13,9 +13,9 @@ import {
     TableRow,
     TextField
 } from "@material-ui/core";
-import EnhancedTableToolbar from "./components/EnhancedTableToolbar";
+import EnhancedTableToolbar from "../../components/EnhancedTableToolbar";
 import EnhancedTableHead from "../../components/EhancedTableHead";
-import {getSorting, stableSort} from "./components/helperFunctions/sorting";
+import {getSorting, stableSort} from "../../utils/sorting";
 import {AccessDeviceService} from "../../service/AccessDeviceService";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -223,6 +223,7 @@ const AccessDevices: React.FC = () => {
                     addFunction={() => {
                         handleOpenDeviceDialog('add')
                     }}
+                    tableHeading="Zugriffsgeräte Verwalten"
                 />
                 <div className={classes.tableWrapper}>
                     <Table
