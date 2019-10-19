@@ -8,7 +8,7 @@ import {getSorting, stableSort} from "../../utils/sorting";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import {UserPermission, ConfirmationDialogState} from "./types";
-import AddAccessDeviceDialog from "./components/AddUserPermissionDialog";
+import AddUserPermissionsDialog from "./components/AddUserPermissionDialog";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
@@ -303,7 +303,7 @@ const UserPermissions: React.FC = () => {
                     labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
-            <AddAccessDeviceDialog
+            <AddUserPermissionsDialog
                 mode={accessDeviceDialogMode}
                 userPermission={userPermissionToEdit}
                 onDialogSuccess={onAddAccessDeviceDialogSuccess}
