@@ -26,7 +26,7 @@ import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
 import {headCell} from "../../components/EhancedTableHead/types";
-import Clipboard from 'react-clipboard.js';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 const AccessDevices: React.FC = () => {
     const classes = useStyles();
@@ -67,10 +67,12 @@ const AccessDevices: React.FC = () => {
             dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
         };
         setPageTitle(pageTitle);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         fetchAccessDevicesToState();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleRequestSort = (event: React.SyntheticEvent, property: string) => {
