@@ -37,8 +37,7 @@ const useToolbarStyles = makeStyles((theme: Theme) => ({
 
 const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
     const classes = useToolbarStyles();
-    const {numSelected, addFunction, deleteFunction, isSelectableTable} = props;
-    const selectionAllowed = isSelectableTable || false;
+    const {numSelected, addFunction, deleteFunction} = props;
 
     return (
         <Toolbar
@@ -60,15 +59,15 @@ const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
             <div className={classes.spacer}/>
             <div className={classes.actions}>
                 {numSelected > 0 ? (
-                    selectionAllowed ? (
-                            <Tooltip title="Delete" onClick={deleteFunction ? () => deleteFunction() : () => {}}>
-                                <IconButton aria-label="delete">
-                                    <DeleteIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        ) : (
-                            <></>
-                        )
+                    <Tooltip
+                        title="Delete"
+                        onClick={deleteFunction ? () => deleteFunction() : () => {
+                        }}
+                    >
+                        <IconButton aria-label="delete">
+                            <DeleteIcon/>
+                        </IconButton>
+                    </Tooltip>
                 ) : (
                     <Tooltip title="Anlegen">
                         {addFunction ? (

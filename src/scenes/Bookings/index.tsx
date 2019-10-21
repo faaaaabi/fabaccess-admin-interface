@@ -150,7 +150,6 @@ const Bookings: React.FC = () => {
                 <EnhancedTableToolbar
                     numSelected={selected.length}
                     tableHeading="Aktive Buchungen verwalten"
-                    isSelectableTable={false}
                 />
                 <div className={classes.tableWrapper}>
                     <Table
