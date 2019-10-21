@@ -21,7 +21,7 @@ import {mainListItems, secondaryListItems} from './components/navigation';
 import style from "./style";
 import Dashboard from "../Dashboard";
 import Users from "../Users";
-import UserPermissions from "../Permissions";
+import UserPermissions from "../UserPermissions";
 import {AppState} from "../../redux";
 import {useSelector} from "react-redux";
 import {NavigationState} from "../../redux/navigation/types";

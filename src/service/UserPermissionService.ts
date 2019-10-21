@@ -1,4 +1,4 @@
-import {UserPermission} from "../scenes/Permissions/types";
+import {UserPermission} from "../scenes/UserPermissions/types";
 import * as localForage from "localforage";
 
 export class UserPermissionService {
