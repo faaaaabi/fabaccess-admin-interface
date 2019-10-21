@@ -41,7 +41,7 @@ export default function UserPermissionsDialog(props: Props) {
             userPermissionName: userPermissionToEditName,
             userPermissionDescription: userPermissionToEditDescription
         });
-    }, [userPermissionToEditName, userPermissionToEditDescription]);
+    }, [userPermissionToEditName, userPermissionToEditDescription, props]);
 
     const handleFormChange = (event: React.SyntheticEvent) => {
         event.persist();
