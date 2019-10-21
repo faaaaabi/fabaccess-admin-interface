@@ -18,7 +18,7 @@ type Props = {
     onClose: Function
 }
 
-export default function AddAccessDeviceDialog(props: Props) {
+export default function AccessDeviceDialog(props: Props) {
 
     const accessDeviceService = new AccessDeviceService();
     let accessDeviceToEditName = '';

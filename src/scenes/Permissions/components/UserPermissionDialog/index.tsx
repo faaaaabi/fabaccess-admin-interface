@@ -18,7 +18,7 @@ type Props = {
     onClose: Function
 }
 
-export default function AddUserPermissionsDialog(props: Props) {
+export default function UserPermissionsDialog(props: Props) {
 
     const userPermissionService = new UserPermissionService();
     let userPermissionToEditId = '';

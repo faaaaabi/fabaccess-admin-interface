@@ -21,7 +21,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {AccessDevice, ConfirmationDialogState} from "./types";
-import AddAccessDeviceDialog from "./components/AddAccessDeviceDialog";
+import AccessDeviceDialog from "./components/AddAccessDeviceDialog";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
@@ -343,7 +343,7 @@ const AccessDevices: React.FC = () => {
                     labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
-            <AddAccessDeviceDialog
+            <AccessDeviceDialog
                 mode={accessDeviceDialogMode}
                 accessDeviceToEdit={accessDeviceToEdit}
                 onDialogSuccess={onAddAccessDeviceDialogSuccess}

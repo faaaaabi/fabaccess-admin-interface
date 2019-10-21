@@ -7,8 +7,8 @@ import EnhancedTableHead from "../../components/EhancedTableHead";
 import {getSorting, stableSort} from "../../utils/sorting";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import {UserPermission, ConfirmationDialogState} from "./types";
-import AddUserPermissionsDialog from "./components/AddUserPermissionDialog";
+import {ConfirmationDialogState, UserPermission} from "./types";
+import UserPermissionsDialog from "./components/UserPermissionDialog";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
@@ -23,7 +23,7 @@ const UserPermissions: React.FC = () => {
     const [page, setPage] = React.useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [userPermissions, setUserPermissions] = React.useState<UserPermission[]>([]);
-    const [isAddAccessDeviceModalVisible, setIsAddAccessDeviceModalVisible] = React.useState<boolean>(false);
+    const [isUserPermissionDialogVisible, setIsUserPermissionDialogVisible] = React.useState<boolean>(false);
     const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
         heading: '',
         confirmationText: '',
@@ -33,7 +33,7 @@ const UserPermissions: React.FC = () => {
         }
     });
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
-    const [accessDeviceDialogMode, setAccessDeviceDialogMode] = useState<'add' | 'edit'>('add');
+    const [userPermissionDialogMode, setUserPermissionDialogMode] = useState<'add' | 'edit'>('add');
     const [userPermissionToEdit, setUserPermissionToEdit] = useState<UserPermission | undefined>(undefined);
     const {enqueueSnackbar} = useSnackbar();
 
@@ -43,8 +43,8 @@ const UserPermissions: React.FC = () => {
     const userPermissionService = new UserPermissionService();
 
     const fetchUserPermissionsToState = async () => {
-        const accessDevices = await userPermissionService.getAllUserPermissions();
-        setUserPermissions(accessDevices);
+        const userPermissions = await userPermissionService.getAllUserPermissions();
+        setUserPermissions(userPermissions);
     };
 
     useEffect(() => {
@@ -108,75 +108,74 @@ const UserPermissions: React.FC = () => {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, userPermissions.length - page * rowsPerPage);
 
-    const deleteAccessDevice = async (accessDeviceId: string | string[]): Promise<void> => {
-        await userPermissionService.deleteUserPermissions(accessDeviceId);
+    const deleteUserPermission = async (userPermissionId: string | string[]): Promise<void> => {
+        await userPermissionService.deleteUserPermissions(userPermissionId);
         await fetchUserPermissionsToState();
         setSelected([]);
     };
 
-    const onAddAccessDeviceDialogSuccess = async () => {
+    const onAddUserPermissionDialogSuccess = async () => {
         enqueueSnackbar('Die Benutzer Berechtigung wurde erfolgreich angelegt', {variant: 'success'});
-        setIsAddAccessDeviceModalVisible(false);
+        setIsUserPermissionDialogVisible(false);
         setUserPermissionToEdit(undefined);
         await fetchUserPermissionsToState();
     };
 
-    const onAddAccessDeviceDialogFailure = () => {
+    const onAddUserPermissionDialogFailure = () => {
         enqueueSnackbar('Fehler beim anlegen der Benutzer Berechtigung', {variant: 'warning'});
         setUserPermissionToEdit(undefined);
-        setIsAddAccessDeviceModalVisible(false);
+        setIsUserPermissionDialogVisible(false);
     };
 
     const handleConfirmation = (heading: string, confirmationText: string, agreeAction: Function, disagreeAction: Function) => {
         setConfirmationDialogState({heading, confirmationText, agreeAction, disagreeAction});
     };
 
-    const handleDeviceDeletion = (accessDeviceId: string | string[]) => {
-        deleteAccessDevice(accessDeviceId);
+    const handleUserPermissionDeletion = (userPermissionId: string | string[]) => {
+        deleteUserPermission(userPermissionId);
         setIsConfirmationDialogVisible(false);
         enqueueSnackbar('Benutzer Berechtigung(en) wurden erfolgreich gelöscht', {variant: 'success'});
     };
 
-    const handleSingleDeviceDeletion = (accessDeviceId: string) => {
-        const accessDeviceToDeleteName = getAccessDeviceName(userPermissions, accessDeviceId);
+    const handleSingleDeviceDeletion = (userPermissionId: string) => {
+        const userPermissionToDeleteName = getUserPermissionName(userPermissions, userPermissionId);
         handleConfirmation('Benutzer Berechtigung wirklich löschen?',
-            `Möchtest Du die Benutzer Berechtigung "${accessDeviceToDeleteName}" wirklich löschen?`,
-            () => handleDeviceDeletion(accessDeviceId),
+            `Möchtest Du die Benutzer Berechtigung "${userPermissionToDeleteName}" wirklich löschen?`,
+            () => handleUserPermissionDeletion(userPermissionId),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
     };
 
-    const handleMultipleDeviceDeletion = (accessDeviceIdsToDelete: string[]) => {
+    const handleMultipleUserPermissionDeletion = (userPermissionIdsToDelete: string[]) => {
         let deviceNamesToDelete = '';
-        const areAllDevicesSelected = accessDeviceIdsToDelete.length === userPermissions.length;
+        const areAllDevicesSelected = userPermissionIdsToDelete.length === userPermissions.length;
         deviceNamesToDelete = areAllDevicesSelected
             ? 'ALLE Benutzer Berechtigungen'
-            : `die Benutzer Berechtigungen "${userPermissions.filter(accessDevice => accessDeviceIdsToDelete.indexOf(accessDevice.id) !== -1)
-                .map(accessDevice => accessDevice.name)
+            : `die Benutzer Berechtigungen "${userPermissions.filter(userPermission => userPermissionIdsToDelete.indexOf(userPermission.id) !== -1)
+                .map(userPermission => userPermission.name)
                 .join(', ')}"`;
 
         handleConfirmation('Benutzer Berechtigung wirklich löschen?',
             `Möchtest Du wirklich ${deviceNamesToDelete} löschen?`,
-            () => handleDeviceDeletion(accessDeviceIdsToDelete),
+            () => handleUserPermissionDeletion(userPermissionIdsToDelete),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
     };
 
-    const handleOpenDeviceDialog = (mode: 'add' | 'edit', accessDeviceId?: string) => {
-        setAccessDeviceDialogMode(mode);
-        if (accessDeviceId) {
-            const accessDeviceToEdit: UserPermission | undefined = userPermissions.find(accessDevice => accessDevice.id === accessDeviceId);
-            setUserPermissionToEdit(accessDeviceToEdit);
+    const handleOpenDeviceDialog = (mode: 'add' | 'edit', userPermissionId?: string) => {
+        setUserPermissionDialogMode(mode);
+        if (userPermissionId) {
+            const userPermissionToEdit: UserPermission | undefined = userPermissions.find(userPermission => userPermission.id === userPermissionId);
+            setUserPermissionToEdit(userPermissionToEdit);
         }
-        setIsAddAccessDeviceModalVisible(true);
+        setIsUserPermissionDialogVisible(true);
     };
 
-    const getAccessDeviceName = (accessDevices: UserPermission[], accessDeviceId: string) => {
-        const accessDeviceToDelete = accessDevices.find(accessDevice => accessDevice.id === accessDeviceId);
-        const accessDeviceToDeleteName: string = accessDeviceToDelete !== undefined ? accessDeviceToDelete.name : '';
-        return accessDeviceToDeleteName;
+    const getUserPermissionName = (userPermission: UserPermission[], userPermissionID: string) => {
+        const userPermissionToDelete = userPermission.find(userPermission => userPermission.id === userPermissionID);
+        return userPermissionToDelete !== undefined ? userPermissionToDelete.name : '';
     };
 
     const headCells: headCell[] = [
@@ -205,7 +204,7 @@ const UserPermissions: React.FC = () => {
                 <EnhancedTableToolbar
                     numSelected={selected.length}
                     deleteFunction={() => {
-                        handleMultipleDeviceDeletion(selected)
+                        handleMultipleUserPermissionDeletion(selected)
                     }}
                     addFunction={() => {
                         handleOpenDeviceDialog('add')
@@ -303,14 +302,14 @@ const UserPermissions: React.FC = () => {
                     labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
-            <AddUserPermissionsDialog
-                mode={accessDeviceDialogMode}
+            <UserPermissionsDialog
+                mode={userPermissionDialogMode}
                 userPermission={userPermissionToEdit}
-                onDialogSuccess={onAddAccessDeviceDialogSuccess}
-                onDialogFailure={onAddAccessDeviceDialogFailure}
-                isOpen={isAddAccessDeviceModalVisible}
+                onDialogSuccess={onAddUserPermissionDialogSuccess}
+                onDialogFailure={onAddUserPermissionDialogFailure}
+                isOpen={isUserPermissionDialogVisible}
                 onClose={() => {
-                    setIsAddAccessDeviceModalVisible(false)
+                    setIsUserPermissionDialogVisible(false)
                 }}
             />
             <ConfirmationDialog
