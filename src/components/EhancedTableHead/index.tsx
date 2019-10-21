@@ -4,22 +4,27 @@ import Props from "./types";
 
 
 const EnhancedTableHead: React.FC<Props> = (props: Props) => {
-    const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells} = props;
+    const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, isSelectableTable} = props;
     const createSortHandler = (property: string) => (event: React.SyntheticEvent) => {
         onRequestSort(event, property);
     };
+    const isSelectionAllowed = isSelectableTable || false;
 
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={(numSelected === rowCount) && numSelected > 0 && rowCount > 0}
-                        onChange={onSelectAllClick}
-                        inputProps={{'aria-label': 'select all desserts'}}
-                    />
-                </TableCell>
+                {isSelectionAllowed ? (
+                    <TableCell padding="checkbox">
+                        <Checkbox
+                            indeterminate={numSelected > 0 && numSelected < rowCount}
+                            checked={(numSelected === rowCount) && numSelected > 0 && rowCount > 0}
+                            onChange={onSelectAllClick}
+                            inputProps={{'aria-label': 'select all desserts'}}
+                        />
+                    </TableCell>
+                ) : (
+                    <></>
+                )}
                 {headCells.map(headCell => (
                     <TableCell
                         key={headCell.id}

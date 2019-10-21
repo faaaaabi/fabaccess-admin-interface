@@ -1,7 +1,8 @@
 type Props = {
-    numSelected: number,
-    deleteFunction: Function
-    addFunction: Function
+    numSelected: number
+    isSelectableTable?: boolean
+    deleteFunction?: Function
+    addFunction?: Function
     tableHeading: string
 }
 

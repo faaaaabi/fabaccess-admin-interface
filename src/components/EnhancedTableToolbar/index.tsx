@@ -3,7 +3,7 @@ import Props from "./types";
 import {IconButton, Theme, Toolbar, Tooltip, Typography, Button} from "@material-ui/core";
 import clsx from "clsx";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 import {lighten} from "@material-ui/core/styles";
 
 const useToolbarStyles = makeStyles((theme: Theme) => ({
@@ -37,7 +37,8 @@ const useToolbarStyles = makeStyles((theme: Theme) => ({
 
 const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const {numSelected, addFunction, deleteFunction, isSelectableTable} = props;
+    const selectionAllowed = isSelectableTable || false;
 
     return (
         <Toolbar
@@ -56,24 +57,35 @@ const EnhancedTableToolbar: React.FC<Props> = (props: Props) => {
                     </Typography>
                 )}
             </div>
-            <div className={classes.spacer} />
+            <div className={classes.spacer}/>
             <div className={classes.actions}>
                 {numSelected > 0 ? (
-                    <Tooltip title="Delete" onClick={() => props.deleteFunction()}>
-                        <IconButton aria-label="delete">
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
+                    selectionAllowed ? (
+                            <Tooltip title="Delete" onClick={deleteFunction ? () => deleteFunction() : () => {}}>
+                                <IconButton aria-label="delete">
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        ) : (
+                            <></>
+                        )
                 ) : (
-                    <Tooltip title="Filter list">
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            onClick={(event: React.SyntheticEvent<HTMLElement>) => {props.addFunction(event) }}
-                        >
-                            Anlegen
-                        </Button>
+                    <Tooltip title="Anlegen">
+                        {addFunction ? (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classes.button}
+                                onClick={(event: React.SyntheticEvent<HTMLElement>) => {
+                                    addFunction(event)
+                                }}
+                            >
+                                Anlegen
+                            </Button>
+                        ) : (
+                            <></>
+                        )}
+
                     </Tooltip>
                 )}
             </div>

@@ -52,10 +52,12 @@ const UserPermissions: React.FC = () => {
             dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
         };
         setPageTitle(pageTitle);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         fetchUserPermissionsToState();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleRequestSort = (event: React.SyntheticEvent, property: string) => {
@@ -226,6 +228,7 @@ const UserPermissions: React.FC = () => {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={userPermissions.length}
+                            isSelectableTable={true}
                         />
                         <TableBody>
                             {stableSort(userPermissions, getSorting(order, orderBy))

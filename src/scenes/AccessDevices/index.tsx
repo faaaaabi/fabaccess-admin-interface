@@ -242,6 +242,7 @@ const AccessDevices: React.FC = () => {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={accessDevices.length}
+                            isSelectableTable={true}
                         />
                         <TableBody>
                             {stableSort(accessDevices, getSorting(order, orderBy))
@@ -268,42 +269,41 @@ const AccessDevices: React.FC = () => {
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {accessDevice.name}
-
                                             </TableCell>
                                             <TableCell align="left">
-                                                <TextField type="password"
-                                                           variant="outlined"
-                                                           value={accessDevice.apiKey}
-                                                           disabled={true}
-                                                           fullWidth={false}
-                                                           InputProps={{
-                                                               style: {
-                                                                   fontSize: 14,
-                                                               },
-                                                               endAdornment: (
-                                                                   <InputAdornment position="end">
-                                                                       <Clipboard
-                                                                           data-clipboard-text={accessDevice.apiKey}
-                                                                           onSuccess={() => onCopyToClipboardSuccess(accessDevice.name)}
-                                                                           style={{
-                                                                               border: 'none',
-                                                                               backgroundColor: 'transparent'
-                                                                           }}
-                                                                       >
-                                                                           <IconButton
-                                                                               edge="end"
-                                                                               aria-label="Api Key in die Zwischenablage kopieren"
-                                                                           >
-                                                                               <FileCopyIcon fontSize='small'/>
-                                                                           </IconButton>
-                                                                       </Clipboard>
-                                                                   </InputAdornment>
-                                                               )
-                                                           }}/>
+                                                <TextField
+                                                    type="password"
+                                                    variant="outlined"
+                                                    value={accessDevice.apiKey}
+                                                    disabled={true}
+                                                    fullWidth={false}
+                                                    InputProps={{
+                                                        style: {
+                                                            fontSize: 14,
+                                                        },
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                <CopyToClipboard
+                                                                    text={accessDevice.apiKey}
+                                                                    onCopy={() => onCopyToClipboardSuccess(accessDevice.name)}
+                                                                >
+                                                                    <IconButton
+                                                                        edge="end"
+                                                                        aria-label="Api Key in die Zwischenablage kopieren"
+                                                                    >
+                                                                        <FileCopyIcon fontSize='small'/>
+                                                                    </IconButton>
+                                                                </CopyToClipboard>
+                                                            </InputAdornment>
+                                                        )
+                                                    }}
+                                                />
                                             </TableCell>
                                             <TableCell align="center">
-                                                <IconButton aria-label="delete"
-                                                            onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}>
+                                                <IconButton
+                                                    aria-label="delete"
+                                                    onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}
+                                                >
                                                     <EditIcon/>
                                                 </IconButton>
                                                 <IconButton
