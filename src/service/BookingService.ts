@@ -46,7 +46,7 @@ export class BookingService {
     };
 
     private generateRandomTimeStampInPast = (maxRangeInMinutes: number) => {
-        return moment().add(maxRangeInMinutes * Math.random(), 'minutes').unix();
+        return moment().add(-maxRangeInMinutes * Math.random(), 'minutes').unix();
     };
 
     async getAllBookings(): Promise<Booking[]> {

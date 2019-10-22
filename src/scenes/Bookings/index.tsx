@@ -173,7 +173,7 @@ const Bookings: React.FC = () => {
                                 .map((booking: Booking, index: number) => {
                                     const labelId = `enhanced-table-checkbox-${index}`;
                                     const bookingStartedAtDate = moment.unix(booking.startedAt).format("DD.MM.YY HH:mm:ss");
-                                    const bookingStartedMinsAgo = moment.unix(booking.startedAt).diff(moment(), 'minutes');
+                                    const bookingStartedMinsAgo = moment().diff(moment.unix(booking.startedAt), 'minutes');
                                     const userInitials = `${booking.userName.split(' ')[0].charAt(0)}${booking.userName.split(' ')[1].charAt(0)}`;
                                     return (
                                         <TableRow
@@ -186,6 +186,7 @@ const Bookings: React.FC = () => {
                                                 <Chip
                                                     avatar={<Avatar><DeveloperBoardItem /></Avatar>}
                                                     label={booking.machineName}
+                                                    clickable={true}
                                                 />
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
