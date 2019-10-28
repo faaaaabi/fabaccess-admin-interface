@@ -8,8 +8,8 @@ import {Provider} from "react-redux";
 import {rootReducer} from "./redux"
 import {compose, createStore} from 'redux';
 import fabbAccessTheme from "./theme/fabbAccessTheme";
-import {MuiThemeProvider} from "@material-ui/core";
 import * as localForage from "localforage";
+import {ThemeProvider} from "@material-ui/styles";
 
 localForage.config({
     driver      : localForage.INDEXEDDB, // Force WebSQL; same as using setDriver()
@@ -30,7 +30,7 @@ const store = createStore(rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-ReactDOM.render(<MuiThemeProvider theme={fabbAccessTheme}><Provider store={store}><App/></Provider></MuiThemeProvider>, document.getElementById('root'));
+ReactDOM.render(<ThemeProvider theme={fabbAccessTheme}><Provider store={store}><App/></Provider></ThemeProvider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

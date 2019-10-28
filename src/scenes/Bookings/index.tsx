@@ -1,7 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {SET_PAGE_TITLE} from "../../redux/navigation/types";
 import {useDispatch} from "react-redux";
-import {IconButton, Paper, Table, TableBody, TableCell, TablePagination, TableRow, Tooltip, Chip, Avatar} from "@material-ui/core";
+import {
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TablePagination,
+    TableRow,
+    Tooltip,
+    Chip,
+    Avatar
+} from "@material-ui/core";
+import {useTheme} from '@material-ui/core/styles';
 import EnhancedTableToolbar from "../../components/EnhancedTableToolbar";
 import EnhancedTableHead from "../../components/EhancedTableHead";
 import {getSorting, stableSort} from "../../utils/sorting";
@@ -16,7 +28,8 @@ import {BookingService} from "../../service/BookingService";
 import moment from "moment";
 
 const Bookings: React.FC = () => {
-    const classes = useStyles();
+    const theme = useTheme();
+    const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);
@@ -33,6 +46,7 @@ const Bookings: React.FC = () => {
     });
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
     const {enqueueSnackbar} = useSnackbar();
+
 
     const dispatch = useDispatch();
     const pageTitle = 'Aktive Buchungen';

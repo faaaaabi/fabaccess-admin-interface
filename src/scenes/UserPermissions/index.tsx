@@ -14,9 +14,11 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
 import {headCell} from "../../components/EhancedTableHead/types";
 import {UserPermissionService} from "../../service/UserPermissionService";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 const UserPermissions: React.FC = () => {
-    const classes = useStyles();
+    const theme = useTheme();
+    const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);

@@ -32,10 +32,12 @@ import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
 import logo from "../../logo.svg";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 
 const Skeleton: React.FC = () => {
-    const classes = style();
+    const theme = useTheme();
+    const classes = style(theme);
     const [open, setOpen] = React.useState(true);
 
     const handleDrawerOpen = () => {

@@ -27,9 +27,11 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
 import {headCell} from "../../components/EhancedTableHead/types";
 import CopyToClipboard from 'react-copy-to-clipboard';
+import useTheme from "@material-ui/core/styles/useTheme";
 
 const AccessDevices: React.FC = () => {
-    const classes = useStyles();
+    const theme = useTheme();
+    const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);
