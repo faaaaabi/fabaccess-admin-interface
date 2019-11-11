@@ -49,7 +49,7 @@ const Bookings: React.FC = () => {
 
 
     const dispatch = useDispatch();
-    const pageTitle = 'Aktive Buchungen';
+    const pageTitle = 'Aktive Buchungen verwalten';
 
     const bookingService = new BookingService();
 
@@ -163,7 +163,7 @@ const Bookings: React.FC = () => {
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar
                     numSelected={selected.length}
-                    tableHeading="Aktive Buchungen verwalten"
+                    tableHeading="Aktive Buchungen"
                 />
                 <div className={classes.tableWrapper}>
                     <Table

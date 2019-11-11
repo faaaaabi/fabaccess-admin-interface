@@ -55,7 +55,7 @@ const AccessDevices: React.FC = () => {
     new AccessDeviceService();
 
     const dispatch = useDispatch();
-    const pageTitle = 'Zugriffsgeräte';
+    const pageTitle = 'Zugriffsgeräte Verwalten';
 
     const accessDeviceService = new AccessDeviceService();
 
@@ -227,7 +227,7 @@ const AccessDevices: React.FC = () => {
                     addFunction={() => {
                         handleOpenDeviceDialog('add')
                     }}
-                    tableHeading="Zugriffsgeräte Verwalten"
+                    tableHeading="Zugriffsgeräte"
                 />
                 <div className={classes.tableWrapper}>
                     <Table

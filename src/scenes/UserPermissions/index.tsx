@@ -40,7 +40,7 @@ const UserPermissions: React.FC = () => {
     const {enqueueSnackbar} = useSnackbar();
 
     const dispatch = useDispatch();
-    const pageTitle = 'Zugriffsgeräte';
+    const pageTitle = 'Benutzer Berechtigungen verwalten';
 
     const userPermissionService = new UserPermissionService();
 
@@ -213,7 +213,7 @@ const UserPermissions: React.FC = () => {
                     addFunction={() => {
                         handleOpenDeviceDialog('add')
                     }}
-                    tableHeading="Benutzer Berechtigungen verwalten"
+                    tableHeading="Benutzer Berechtigungen"
                 />
                 <div className={classes.tableWrapper}>
                     <Table
