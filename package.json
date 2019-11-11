@@ -9,7 +9,10 @@
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",
+    "fuse.js": "^3.4.5",
     "localforage": "^1.7.3",
+    "lodash": "^4.17.15",
+    "material-ui-search-bar": "^1.0.0-beta.14",
     "moment": "^2.24.0",
     "notistack": "^0.9.3",
     "react": "^16.10.2",
@@ -43,6 +46,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.18",
+    "@types/lodash": "^4.14.146",
     "@types/node": "12.7.11",
     "@types/react": "16.9.5",
     "@types/react-copy-to-clipboard": "^4.3.0",

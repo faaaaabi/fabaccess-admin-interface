@@ -47,7 +47,7 @@ export default function AccessDeviceDialog(props: Props) {
 
     const isFormValid = () => {
         return accessDeviceName !== '';
-    }
+    };
 
     const handleAdd = async () => {
         try {
