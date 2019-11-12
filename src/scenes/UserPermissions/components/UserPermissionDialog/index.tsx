@@ -21,15 +21,6 @@ type Props = {
 export default function UserPermissionsDialog(props: Props) {
 
     const userPermissionService = new UserPermissionService();
-    let userPermissionToEditId = '';
-    let userPermissionToEditName = '';
-    let userPermissionToEditDescription = '';
-
-    if (props.userPermission) {
-        userPermissionToEditId = props.userPermission.id;
-        userPermissionToEditName = props.userPermission.name;
-        userPermissionToEditDescription = props.userPermission.description;
-    }
 
     const [formValues, setFormValues] = useState({
         userPermissionName: '',
@@ -37,11 +28,19 @@ export default function UserPermissionsDialog(props: Props) {
     });
 
     useEffect(() => {
-        setFormValues({
-            userPermissionName: userPermissionToEditName,
-            userPermissionDescription: userPermissionToEditDescription
-        });
-    }, [userPermissionToEditName, userPermissionToEditDescription, props]);
+        if(props.mode === 'edit' && props.userPermission !== undefined) {
+            setFormValues({
+                userPermissionName: props.userPermission.name,
+                userPermissionDescription: props.userPermission.description
+            });
+        } else {
+            setFormValues({
+                userPermissionName: '',
+                userPermissionDescription: ''
+            });
+        }
+
+    }, [props]);
 
     const handleFormChange = (event: React.SyntheticEvent) => {
         event.persist();
@@ -77,8 +76,12 @@ export default function UserPermissionsDialog(props: Props) {
 
     const handleEdit = async () => {
         try {
-            await userPermissionService.editUserPermission(userPermissionToEditId, formValues.userPermissionName, formValues.userPermissionDescription);
-            props.onDialogSuccess();
+            if(props.userPermission !== undefined) {
+                await userPermissionService.editUserPermission(props.userPermission.id, formValues.userPermissionName, formValues.userPermissionDescription);
+                props.onDialogSuccess();
+            } else {
+                throw new Error('No userPermissions object present in props in handleEdit');
+            }
         } catch (e) {
             props.onDialogFailure();
             console.error(e);
@@ -100,7 +103,7 @@ export default function UserPermissionsDialog(props: Props) {
                 handleEdit();
             }
         }
-    }
+    };
 
     return (
         <div>
@@ -112,7 +115,9 @@ export default function UserPermissionsDialog(props: Props) {
                 aria-labelledby="form-dialog-title"
             >
                 <DialogTitle
-                    id="form-dialog-title">{props.mode === 'add' ? 'Benutzer Berechtigung anlegen' : 'Benutzer Berechtigung ändern'}
+                    id="form-dialog-title"
+                >
+                    {props.mode === 'add' ? 'Benutzer Berechtigung anlegen' : 'Benutzer Berechtigung ändern'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>

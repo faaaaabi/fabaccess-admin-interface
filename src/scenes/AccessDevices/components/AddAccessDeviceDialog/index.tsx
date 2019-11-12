@@ -21,19 +21,15 @@ type Props = {
 export default function AccessDeviceDialog(props: Props) {
 
     const accessDeviceService = new AccessDeviceService();
-    let accessDeviceToEditName = '';
-    let accessDeviceId = '';
-
-    if (props.accessDeviceToEdit) {
-        accessDeviceToEditName = props.accessDeviceToEdit.name;
-        accessDeviceId = props.accessDeviceToEdit.id;
-    }
-
-    const [accessDeviceName, setAccessDeviceName] = useState(accessDeviceToEditName);
+    const [accessDeviceName, setAccessDeviceName] = useState('');
 
     useEffect(() => {
-        setAccessDeviceName(accessDeviceToEditName);
-    }, [accessDeviceToEditName]);
+        if(props.mode === 'edit' && props.accessDeviceToEdit !== undefined) {
+            setAccessDeviceName(props.accessDeviceToEdit.name);
+        } else {
+            setAccessDeviceName('');
+        }
+    }, [props]);
 
     const handleFormChange = (event: React.SyntheticEvent) => {
         event.persist();
@@ -62,8 +58,12 @@ export default function AccessDeviceDialog(props: Props) {
 
     const handleEdit = async () => {
         try {
-            await accessDeviceService.editDevice(accessDeviceId, accessDeviceName);
-            props.onDialogSuccess();
+            if(props.accessDeviceToEdit !== undefined) {
+                await accessDeviceService.editDevice(props.accessDeviceToEdit.id, accessDeviceName);
+                props.onDialogSuccess();
+            } else {
+                throw new Error('No accessDevice object present in props in handleEdit');
+            }
         } catch (e) {
             props.onDialogFailure();
             console.error(e);

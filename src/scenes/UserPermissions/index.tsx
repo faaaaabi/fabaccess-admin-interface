@@ -170,7 +170,7 @@ const UserPermissions: React.FC = () => {
 
     const handleOpenDeviceDialog = (mode: 'add' | 'edit', userPermissionId?: string) => {
         setUserPermissionDialogMode(mode);
-        if (userPermissionId) {
+        if (mode === 'edit') {
             const userPermissionToEdit: UserPermission | undefined = userPermissions.find(userPermission => userPermission.id === userPermissionId);
             setUserPermissionToEdit(userPermissionToEdit);
         }
