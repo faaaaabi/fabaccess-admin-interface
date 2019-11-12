@@ -152,16 +152,15 @@ const UserPermissions: React.FC = () => {
     };
 
     const handleMultipleUserPermissionDeletion = (userPermissionIdsToDelete: string[]) => {
-        let deviceNamesToDelete = '';
         const areAllDevicesSelected = userPermissionIdsToDelete.length === userPermissions.length;
-        deviceNamesToDelete = areAllDevicesSelected
+        const userPermissionNamesToDelete = areAllDevicesSelected
             ? 'ALLE Benutzer Berechtigungen'
             : `die Benutzer Berechtigungen "${userPermissions.filter(userPermission => userPermissionIdsToDelete.indexOf(userPermission.id) !== -1)
                 .map(userPermission => userPermission.name)
                 .join(', ')}"`;
 
         handleConfirmation('Benutzer Berechtigung wirklich löschen?',
-            `Möchtest Du wirklich ${deviceNamesToDelete} löschen?`,
+            `Möchtest Du wirklich ${userPermissionNamesToDelete} löschen?`,
             () => handleUserPermissionDeletion(userPermissionIdsToDelete),
             () => setIsConfirmationDialogVisible(false)
         );

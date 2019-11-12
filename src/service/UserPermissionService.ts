@@ -66,10 +66,10 @@ export class UserPermissionService {
     }
 
     async editUserPermission(userPermissionId: string, userPermissionName: string, userPermissionDescription: string) {
-        const storedUserPermissons: UserPermission[] = await this.getAllUserPermissions();
-        const userPermissionIndexToEdit = storedUserPermissons.findIndex(userPermisson => userPermisson.id === userPermissionId);
-        storedUserPermissons[userPermissionIndexToEdit].name = userPermissionName;
-        storedUserPermissons[userPermissionIndexToEdit].description = userPermissionDescription;
-        await localForage.setItem('userPermissions', storedUserPermissons);
+        const storedUserPermissions: UserPermission[] = await this.getAllUserPermissions();
+        const userPermissionIndexToEdit = storedUserPermissions.findIndex(userPermission => userPermission.id === userPermissionId);
+        storedUserPermissions[userPermissionIndexToEdit].name = userPermissionName;
+        storedUserPermissions[userPermissionIndexToEdit].description = userPermissionDescription;
+        await localForage.setItem('userPermissions', storedUserPermissions);
     }
 }
