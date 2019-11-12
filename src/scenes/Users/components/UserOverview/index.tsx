@@ -137,7 +137,7 @@ const UserOverview: React.FC = () => {
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, users.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, visibleUsers.length - page * rowsPerPage);
 
     const deleteUsers = async (userId: string | string[]): Promise<void> => {
         await userService.deleteUsers(userId);
@@ -344,7 +344,7 @@ const UserOverview: React.FC = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={users.length}
+                    count={visibleUsers.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
