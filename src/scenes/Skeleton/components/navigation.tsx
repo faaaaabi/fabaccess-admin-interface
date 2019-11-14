@@ -28,7 +28,7 @@ export const mainListItems: React.ReactElement = (
             </ListItemIcon>
             <ListItemText primary="Benutzer"/>
         </ListItem>
-        <ListItem button={true} component={NavLink} to="/UserPermissions" activeClassName="Mui-selected">
+        <ListItem button={true} component={NavLink} to="/userPermissions" activeClassName="Mui-selected">
             <ListItemIcon>
                 <LockIcon/>
             </ListItemIcon>
@@ -52,7 +52,7 @@ export const mainListItems: React.ReactElement = (
             </ListItemIcon>
             <ListItemText primary="Orte"/>
         </ListItem>
-        <ListItem button={true} component={NavLink} to="/AccessDevices" activeClassName="Mui-selected">
+        <ListItem button={true} component={NavLink} to="/accessDevices" activeClassName="Mui-selected">
             <ListItemIcon>
                 <TabletIcon/>
             </ListItemIcon>
