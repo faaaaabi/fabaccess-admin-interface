@@ -34,7 +34,7 @@ export const mainListItems: React.ReactElement = (
             </ListItemIcon>
             <ListItemText primary="Berechtigungen"/>
         </ListItem>
-        <ListItem button={true} component={NavLink} to="/actors" activeClassName="Mui-selected">
+        <ListItem button={true} component={NavLink} to="/actuators" activeClassName="Mui-selected">
             <ListItemIcon>
                 <MemoryItem/>
             </ListItemIcon>

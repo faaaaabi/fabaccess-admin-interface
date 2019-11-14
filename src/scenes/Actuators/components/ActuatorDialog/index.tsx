@@ -9,14 +9,14 @@ import {ActuatorService} from "../../../../service/ActuatorService";
 import {Actuator} from "../ActorOverview/types";
 
 type Props = {
-    actor?: Actuator
+    actuator?: Actuator
     onDialogSuccess: Function
     onDialogFailure: Function
     isOpen: boolean
     onClose: Function
 }
 
-export default function ActorDialog(props: Props) {
+export default function ActuatorDialog(props: Props) {
 
     const actorService = new ActuatorService();
 
@@ -25,9 +25,9 @@ export default function ActorDialog(props: Props) {
     });
 
     useEffect(() => {
-        if (props.actor) {
+        if (props.actuator) {
             setFormValues({
-                actorName: props.actor.name,
+                actorName: props.actuator.name,
             });
         }
     }, [props]);
@@ -54,8 +54,8 @@ export default function ActorDialog(props: Props) {
 
     const handleEdit = async () => {
         try {
-            if (props.actor !== undefined) {
-                await actorService.editActor(props.actor.id, formValues.actorName);
+            if (props.actuator !== undefined) {
+                await actorService.editActuator(props.actuator.id, formValues.actorName);
                 props.onDialogSuccess();
             } else {
                 throw new Error('No actor object object present in props in handleEdit');

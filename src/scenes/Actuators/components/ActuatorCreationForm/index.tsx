@@ -79,7 +79,7 @@ const ActuatorCreationForm: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            await actuatorService.addActor(actuactorToAddDescription, 'openHAB', 'switch');
+            await actuatorService.addActuator(actuactorToAddDescription, 'openHAB', 'switch');
             enqueueSnackbar('Aktor erfolgreich angelegt', {variant: 'success'});
             history.push('/actors');
         } catch (e) {

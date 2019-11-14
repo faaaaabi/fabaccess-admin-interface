@@ -1,34 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {SET_PAGE_TITLE} from "../../../../redux/navigation/types";
 import {useDispatch} from "react-redux";
-import {
-    Checkbox,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TablePagination,
-    TableRow,
-    Chip
-} from "@material-ui/core";
+import {Checkbox, IconButton, Paper, Table, TableBody, TableCell, TablePagination, TableRow} from "@material-ui/core";
 import EnhancedTableToolbar from "../../../../components/EnhancedTableToolbar";
 import EnhancedTableHead from "../../../../components/EhancedTableHead";
 import {getSorting, stableSort} from "../../../../utils/sorting";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import {ConfirmationDialogState, Actuator} from "./types";
-import ActuatorDialog from "../ActuatorDialog";
+import {Place, ConfirmationDialogState} from "../../types";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../../../components/ConfirmationDialog";
 import useStyles from "./styles";
 import {headCell} from "../../../../components/EhancedTableHead/types";
 import useTheme from "@material-ui/core/styles/useTheme";
-import {ActuatorService} from "../../../../service/ActuatorService";
-import { useHistory } from "react-router-dom";
-import PowerIcon from '@material-ui/icons/Power';
+import {PlacesService} from "../../../../service/PlacesService";
+import {useHistory} from "react-router-dom";
 
-const ActuatorOverview: React.FC = () => {
+const PlacesOverview: React.FC = () => {
     const theme = useTheme();
     const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
@@ -36,8 +24,7 @@ const ActuatorOverview: React.FC = () => {
     const [selected, setSelected] = React.useState<(string)[]>([]);
     const [page, setPage] = React.useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [actuators, setActuators] = React.useState<Actuator[]>([]);
-    const [isActuatorialogVisible, setIsActuatorDialogVisible] = React.useState<boolean>(false);
+    const [places, setPlaces] = React.useState<Place[]>([]);
     const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
         heading: '',
         confirmationText: '',
@@ -47,18 +34,17 @@ const ActuatorOverview: React.FC = () => {
         }
     });
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
-    const [actuatorToEdit, setActuatorToEdit] = useState<Actuator | undefined>(undefined);
     const {enqueueSnackbar} = useSnackbar();
     const history = useHistory();
 
     const dispatch = useDispatch();
-    const pageTitle = 'Aktoren verwalten';
+    const pageTitle = 'Orte verwalten';
 
-    const actuatorService = new ActuatorService();
+    const placesService = new PlacesService();
 
-    const fetchActuatorsToState = async () => {
-        const actuators = await actuatorService.getAllactuators();
-        setActuators(actuators);
+    const fetchPlacesToState = async () => {
+        const places = await placesService.getAllPlaces();
+        setPlaces(places);
     };
 
     useEffect(() => {
@@ -70,7 +56,7 @@ const ActuatorOverview: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        fetchActuatorsToState();
+        fetchPlacesToState();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -83,7 +69,7 @@ const ActuatorOverview: React.FC = () => {
     const handleSelectAllClick = (event: React.FormEvent<HTMLInputElement>) => {
         const input = event.target as HTMLInputElement;
         if (input.checked) {
-            const newSelecteds = actuators.map((n) => n.id);
+            const newSelecteds = places.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
@@ -122,82 +108,53 @@ const ActuatorOverview: React.FC = () => {
 
     const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, actuators.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, places.length - page * rowsPerPage);
 
-    const deleteUserActuator = async (userPermissionId: string | string[]): Promise<void> => {
-        await actuatorService.deleteActuators(userPermissionId);
-        await fetchActuatorsToState();
+    const deleteUserPlaces = async (userPermissionId: string | string[]): Promise<void> => {
+        await placesService.deletePlaces(userPermissionId);
+        await fetchPlacesToState();
         setSelected([]);
-    };
-
-    const onEditActuatorDialogSuccess = async () => {
-        enqueueSnackbar('Der Aktor wurde erfolgreich geändert', {variant: 'success'});
-        setIsActuatorDialogVisible(false);
-        setActuatorToEdit(undefined);
-        await fetchActuatorsToState();
-    };
-
-    const onEditDialogFailure = () => {
-        enqueueSnackbar('Fehler beim Ändern des Aktors', {variant: 'warning'});
-        setActuatorToEdit(undefined);
-        setIsActuatorDialogVisible(false);
     };
 
     const handleConfirmation = (heading: string, confirmationText: string, agreeAction: Function, disagreeAction: Function) => {
         setConfirmationDialogState({heading, confirmationText, agreeAction, disagreeAction});
     };
 
-    const handleActuatorDeletion = (actuatorId: string | string[]) => {
-        deleteUserActuator(actuatorId);
+    const handlePlacesDeletion = (placesId: string | string[]) => {
+        deleteUserPlaces(placesId);
         setIsConfirmationDialogVisible(false);
-        enqueueSnackbar('Aktor(en) wurde(n) erfolgreich gelöscht', {variant: 'success'});
+        enqueueSnackbar('Ort(e) wurde(n) erfolgreich gelöscht', {variant: 'success'});
     };
 
-    const handleSingleActuatorDeletion = (actuatorId: string) => {
-        const ActuatorToDeleteName = getActuatorName(actuators, actuatorId);
-        handleConfirmation('Aktor wirklich löschen?',
-            `Möchtest Du den Aktor "${ActuatorToDeleteName}" wirklich löschen?`,
-            () => handleActuatorDeletion(actuatorId),
+    const handleSinglePlacesDeletion = (placesId: string) => {
+        const PlacesToDeleteName = getPlacesName(places, placesId);
+        handleConfirmation('Ort wirklich löschen?',
+            `Möchtest Du den Ort "${PlacesToDeleteName}" wirklich löschen?`,
+            () => handlePlacesDeletion(placesId),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
     };
 
-    const handleMultipleActuatorDeletion = (actuatorIdsToDelete: string[]) => {
-        const areAllActuatorsSelected = actuatorIdsToDelete.length === actuators.length;
-        const ActuatorNamesToDelete = areAllActuatorsSelected
-            ? 'ALLE Aktoren'
-            : `die Aktoren "${actuators.filter(userPermission => actuatorIdsToDelete.indexOf(userPermission.id) !== -1)
-                .map(userPermission => userPermission.name)
+    const handleMultiplePlacesDeletion = (placesIdsToDelete: string[]) => {
+        const areAllPlacessSelected = placesIdsToDelete.length === places.length;
+        const PlacesNamesToDelete = areAllPlacessSelected
+            ? 'ALLE Orte'
+            : `die Orte "${places.filter(place => placesIdsToDelete.indexOf(place.id) !== -1)
+                .map(place => place.name)
                 .join(', ')}"`;
 
-        handleConfirmation('Aktor wirklich löschen?',
-            `Möchtest Du wirklich die Aktoren ${ActuatorNamesToDelete} löschen?`,
-            () => handleActuatorDeletion(actuatorIdsToDelete),
+        handleConfirmation('Ort wirklich löschen?',
+            `Möchtest Du wirklich ${PlacesNamesToDelete} löschen?`,
+            () => handlePlacesDeletion(placesIdsToDelete),
             () => setIsConfirmationDialogVisible(false)
         );
         setIsConfirmationDialogVisible(true);
     };
 
-    const handleOpenDeviceDialog = (userPermissionId?: string) => {
-        const userPermissionToEdit: Actuator | undefined = actuators.find(userPermission => userPermission.id === userPermissionId);
-        setActuatorToEdit(userPermissionToEdit);
-        setIsActuatorDialogVisible(true);
-    };
-
-    const getActuatorName = (userPermission: Actuator[], userPermissionID: string) => {
+    const getPlacesName = (userPermission: Place[], userPermissionID: string) => {
         const userPermissionToDelete = userPermission.find(userPermission => userPermission.id === userPermissionID);
         return userPermissionToDelete !== undefined ? userPermissionToDelete.name : '';
-    };
-
-    const getStatusColor = (status: 'online' | 'offline' | 'unknown'): 'primary' | 'secondary' | undefined => {
-        if (status === 'online') {
-            return 'primary'
-        }
-        if (status === 'offline') {
-            return 'secondary'
-        }
-        return undefined
     };
 
     const headCells: headCell[] = [
@@ -205,31 +162,15 @@ const ActuatorOverview: React.FC = () => {
             id: 'name',
             numeric: false,
             disablePadding: true,
-            label: 'Bezeichnung des Aktors',
+            label: 'Name des Ortes',
             isSortable: true,
             align: 'left'
         },
         {
-            id: 'system',
+            id: 'numMaschines',
             numeric: false,
             disablePadding: true,
-            label: 'System',
-            isSortable: true,
-            align: 'left'
-        },
-        {
-            id: 'type',
-            numeric: false,
-            disablePadding: true,
-            label: 'type',
-            isSortable: true,
-            align: 'left'
-        },
-        {
-            id: 'status',
-            numeric: false,
-            disablePadding: true,
-            label: 'Status',
+            label: '# Maschinen',
             isSortable: true,
             align: 'left'
         },
@@ -242,12 +183,12 @@ const ActuatorOverview: React.FC = () => {
                 <EnhancedTableToolbar
                     numSelected={selected.length}
                     deleteFunction={() => {
-                        handleMultipleActuatorDeletion(selected)
+                        handleMultiplePlacesDeletion(selected)
                     }}
                     addFunction={() => {
-                        history.push('/actuators/create')
+                        history.push('/places/create')
                     }}
-                    tableHeading="Aktoren"
+                    tableHeading="Orte"
                 />
                 <div className={classes.tableWrapper}>
                     <Table
@@ -263,14 +204,14 @@ const ActuatorOverview: React.FC = () => {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={actuators.length}
+                            rowCount={places.length}
                             isSelectableTable={true}
                         />
                         <TableBody>
-                            {stableSort(actuators, getSorting(order, orderBy))
+                            {stableSort(places, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((actuator: Actuator, index: number) => {
-                                    const isItemSelected = isSelected(actuator.id);
+                                .map((place: Place, index: number) => {
+                                    const isItemSelected = isSelected(place.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -279,38 +220,26 @@ const ActuatorOverview: React.FC = () => {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={actuator.id}
+                                            key={place.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
                                                     inputProps={{'aria-labelledby': labelId}}
-                                                    onClick={event => handleSingleSelection(event, actuator.id)}
+                                                    onClick={event => handleSingleSelection(event, place.id)}
                                                 />
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                {actuator.name}
+                                                {place.name}
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                {actuator.system}
-                                            </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                <Chip
-                                                    icon={<PowerIcon />}
-                                                    label={actuator.type === 'switch' ? 'Schalter' : actuator.type}
-                                                />
-                                            </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                <Chip
-                                                    color={getStatusColor(actuator.status)}
-                                                    label={actuator.status}
-                                                />
+                                                {place.assignedMachineIds.length}
                                             </TableCell>
                                             <TableCell align="center">
                                                 <IconButton
                                                     aria-label="delete"
-                                                    onClick={() => handleOpenDeviceDialog(actuator.id)}
+                                                    //onClick={() => history.push(`/places/edit/${place.id}`)}
                                                 >
                                                     <EditIcon/>
                                                 </IconButton>
@@ -318,7 +247,7 @@ const ActuatorOverview: React.FC = () => {
                                                     className={classes.button}
                                                     aria-label="delete"
                                                     onClick={() => {
-                                                        handleSingleActuatorDeletion(actuator.id)
+                                                        handleSinglePlacesDeletion(place.id)
                                                     }}
                                                 >
                                                     <DeleteIcon/>
@@ -338,7 +267,7 @@ const ActuatorOverview: React.FC = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={actuators.length}
+                    count={places.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
@@ -353,15 +282,6 @@ const ActuatorOverview: React.FC = () => {
                     labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
-            <ActuatorDialog
-                actuator={actuatorToEdit}
-                onDialogSuccess={onEditActuatorDialogSuccess}
-                onDialogFailure={onEditDialogFailure}
-                isOpen={isActuatorialogVisible}
-                onClose={() => {
-                    setIsActuatorDialogVisible(false)
-                }}
-            />
             <ConfirmationDialog
                 isOpen={isConfirmationDialogVisible}
                 agreeAction={confirmationDialogState.agreeAction}
@@ -373,4 +293,4 @@ const ActuatorOverview: React.FC = () => {
     );
 };
 
-export default ActuatorOverview;
+export default PlacesOverview;

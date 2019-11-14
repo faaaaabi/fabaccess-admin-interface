@@ -4,7 +4,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         width: '100%',
-        marginTop: theme.spacing(2),
     },
     paper: {
         width: '100%',
@@ -14,8 +13,6 @@ const useStyles = makeStyles((theme) => ({
         width: 'fit-content'
     },
     textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
         width: '100%',
     },
     table: {
@@ -24,7 +21,23 @@ const useStyles = makeStyles((theme) => ({
     button: {
         marginTop: theme.spacing(2),
         marginLeft: theme.spacing(2),
+        float: 'right',
     },
+    list: {
+        width: '100%',
+        backgroundColor: theme.palette.background.paper,
+    },
+    box: {
+        background: '#fff',
+        border: '1px solid #999',
+        borderRadius: '3px',
+        width: '100px',
+        height: '100px',
+        fontSize: '80%',
+        margin: '10px',
+        padding: '10px',
+        float: 'left',
+    }
 }));
 
 export default useStyles;

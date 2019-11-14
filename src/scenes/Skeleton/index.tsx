@@ -102,7 +102,7 @@ const Skeleton: React.FC = () => {
                             <Route exact={true} path="/" component={Dashboard}/>
                             <Route path="/users" component={Users}/>
                             <Route path="/userPermissions" component={UserPermissions}/>
-                            <Route path="/actors" component={Actors}/>
+                            <Route path="/actuators" component={Actors}/>
                             <Route path="/machines" component={Machines}/>
                             <Route path="/places" component={Places}/>
                             <Route path="/accessDevices" component={AccessDevices}/>

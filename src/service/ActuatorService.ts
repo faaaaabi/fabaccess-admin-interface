@@ -54,10 +54,10 @@ export class ActuatorService {
             await localForage.setItem('actuators', storedActuatorsWithoutDeleted);
             return;
         }
-        console.error('[actuatorservice.deleteactuators] No stored user permissions found');
+        console.error('[actuatorService.deleteActuators] No stored actuators found');
     }
 
-    async addActor(actuatorName: string, system: 'openHAB', type: 'switch' | 'messageDriven') {
+    async addActuator(actuatorName: string, system: 'openHAB', type: 'switch' | 'messageDriven') {
         const storedActuators: Actuator[] = await this.getAllactuators();
         const generatedId = this.makeid(32);
         const possibleStatuses = ['online', 'offline', 'unknown'];
@@ -67,7 +67,7 @@ export class ActuatorService {
         await localForage.setItem('actuators', storedActuators);
     }
 
-    async editActor(actuatorId: string, actuatorName: string) {
+    async editActuator(actuatorId: string, actuatorName: string) {
         const storedActuators: Actuator[] = await this.getAllactuators();
         const ActorIndexToEdit = storedActuators.findIndex(actuator => actuator.id === actuatorId);
         storedActuators[ActorIndexToEdit].name = actuatorName;

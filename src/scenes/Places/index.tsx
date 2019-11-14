@@ -1,21 +1,23 @@
-import React, {useEffect} from "react";
-import {SET_PAGE_TITLE} from "../../redux/navigation/types";
-import {useDispatch} from "react-redux";
+import React from "react";
+import {Route, Switch} from "react-router-dom";
+import ActorOverview from "./components/PlacesOverview";
+import PlacesForm from "./components/PlacesForm";
 
-const Places: React.FC = () => {
-
-    const dispatch = useDispatch();
-    const pageTitle = 'Orte';
-
-    useEffect(() => {
-        dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
-    }, [dispatch]);
+const Actors: React.FC = () => {
 
     return (
-        <div>
-            Orte - Content
-        </div>
+        <Switch>
+            <Route exact={true} path="/places">
+                <ActorOverview/>
+            </Route>
+            <Route path="/places/create">
+                <PlacesForm/>
+            </Route>
+            <Route path="/places/edit/:id">
+                <PlacesForm/>
+            </Route>
+        </Switch>
     );
 };
 
-export default Places;
+export default Actors;
