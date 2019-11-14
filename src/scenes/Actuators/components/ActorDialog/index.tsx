@@ -100,7 +100,7 @@ export default function ActorDialog(props: Props) {
                         autoFocus={true}
                         margin="dense"
                         id="name"
-                        label="Name des Aktors"
+                        label="Bezeichnung des Aktors"
                         type="text"
                         fullWidth={true}
                         required={true}

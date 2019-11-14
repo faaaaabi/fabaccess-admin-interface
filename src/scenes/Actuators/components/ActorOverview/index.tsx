@@ -223,7 +223,7 @@ const ActorOverview: React.FC = () => {
             disablePadding: true,
             label: 'type',
             isSortable: true,
-            align: 'center'
+            align: 'left'
         },
         {
             id: 'status',
@@ -231,7 +231,7 @@ const ActorOverview: React.FC = () => {
             disablePadding: true,
             label: 'Status',
             isSortable: true,
-            align: 'center'
+            align: 'left'
         },
         {id: 'actions', numeric: false, disablePadding: true, label: 'Aktionen', isSortable: false, align: 'center'}
     ];
@@ -292,16 +292,16 @@ const ActorOverview: React.FC = () => {
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {actor.name}
                                             </TableCell>
-                                            <TableCell align="left" component="th" id={labelId} scope="row" padding="none">
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {actor.system}
                                             </TableCell>
-                                            <TableCell align="left" component="th" id={labelId} scope="row" padding="none">
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 <Chip
                                                     icon={<PowerIcon />}
                                                     label={actor.type === 'switch' ? 'Schalter' : actor.type}
                                                 />
                                             </TableCell>
-                                            <TableCell align="center" component="th" id={labelId} scope="row" padding="none">
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 <Chip
                                                     color={getStatusColor(actor.status)}
                                                     label={actor.status}

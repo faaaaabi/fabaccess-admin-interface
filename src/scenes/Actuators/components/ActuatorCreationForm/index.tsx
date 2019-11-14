@@ -202,7 +202,7 @@ const ActuatorCreationForm: React.FC = () => {
             </Paper>
             <Paper className={classes.paper}>
                 <Typography variant="h6" gutterBottom={true}>
-                    Bezeichnung
+                    Einstellungen
                 </Typography>
                 <Grid
                     container={true}
