@@ -183,7 +183,7 @@ const UserOverview: React.FC = () => {
 
     const handleSearchQueryChange = (searchQuery: string) => {
         setSearchQuery(searchQuery);
-        if(searchQuery === '') {
+        if (searchQuery === '') {
             setVisibleUsers(users);
         } else {
             setVisibleUsers(fuseSearchIndex.search(searchQuery))
@@ -305,8 +305,13 @@ const UserOverview: React.FC = () => {
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {user.emailAddress}
                                             </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none"
-                                                       align="center">
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                padding="none"
+                                                align="center"
+                                            >
                                                 {user.isAdmin ? (
                                                     <CheckCircleIcon color="primary"/>
                                                 ) : (

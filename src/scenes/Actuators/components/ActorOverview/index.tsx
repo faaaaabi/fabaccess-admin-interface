@@ -1,32 +1,34 @@
 import React, {useEffect, useState} from "react";
-import {SET_PAGE_TITLE} from "../../redux/navigation/types";
+import {SET_PAGE_TITLE} from "../../../../redux/navigation/types";
 import {useDispatch} from "react-redux";
 import {
     Checkbox,
-    Chip,
     IconButton,
     Paper,
     Table,
     TableBody,
     TableCell,
     TablePagination,
-    TableRow
+    TableRow,
+    Chip
 } from "@material-ui/core";
-import EnhancedTableToolbar from "../../components/EnhancedTableToolbar";
-import EnhancedTableHead from "../../components/EhancedTableHead";
-import {getSorting, stableSort} from "../../utils/sorting";
+import EnhancedTableToolbar from "../../../../components/EnhancedTableToolbar";
+import EnhancedTableHead from "../../../../components/EhancedTableHead";
+import {getSorting, stableSort} from "../../../../utils/sorting";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import {ConfirmationDialogState, Actor} from "./types";
-import ActorDialog from "./components/ActorDialog";
+import {ConfirmationDialogState, Actuator} from "./types";
+import ActorDialog from "../ActorDialog";
 import {useSnackbar} from 'notistack';
-import ConfirmationDialog from "../../components/ConfirmationDialog";
+import ConfirmationDialog from "../../../../components/ConfirmationDialog";
 import useStyles from "./styles";
-import {headCell} from "../../components/EhancedTableHead/types";
+import {headCell} from "../../../../components/EhancedTableHead/types";
 import useTheme from "@material-ui/core/styles/useTheme";
-import {ActorService} from "../../service/ActorService";
+import {ActuatorService} from "../../../../service/ActuatorService";
+import { useHistory } from "react-router-dom";
+import PowerIcon from '@material-ui/icons/Power';
 
-const Actors: React.FC = () => {
+const ActorOverview: React.FC = () => {
     const theme = useTheme();
     const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
@@ -34,7 +36,7 @@ const Actors: React.FC = () => {
     const [selected, setSelected] = React.useState<(string)[]>([]);
     const [page, setPage] = React.useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [actors, setActors] = React.useState<Actor[]>([]);
+    const [actors, setActors] = React.useState<Actuator[]>([]);
     const [isActorDialogVisible, setIsActorDialogVisible] = React.useState<boolean>(false);
     const [confirmationDialogState, setConfirmationDialogState] = useState<ConfirmationDialogState>({
         heading: '',
@@ -45,16 +47,17 @@ const Actors: React.FC = () => {
         }
     });
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
-    const [actorToEdit, setActorToEdit] = useState<Actor | undefined>(undefined);
+    const [actorToEdit, setActorToEdit] = useState<Actuator | undefined>(undefined);
     const {enqueueSnackbar} = useSnackbar();
+    const history = useHistory();
 
     const dispatch = useDispatch();
     const pageTitle = 'Aktoren verwalten';
 
-    const actorService = new ActorService();
+    const actorService = new ActuatorService();
 
     const fetchActorsToState = async () => {
-        const actors = await actorService.getAllactors();
+        const actors = await actorService.getAllactuators();
         setActors(actors);
     };
 
@@ -122,7 +125,7 @@ const Actors: React.FC = () => {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, actors.length - page * rowsPerPage);
 
     const deleteUserActor = async (userPermissionId: string | string[]): Promise<void> => {
-        await actorService.deleteActors(userPermissionId);
+        await actorService.deleteActuators(userPermissionId);
         await fetchActorsToState();
         setSelected([]);
     };
@@ -177,12 +180,12 @@ const Actors: React.FC = () => {
     };
 
     const handleOpenDeviceDialog = (userPermissionId?: string) => {
-        const userPermissionToEdit: Actor | undefined = actors.find(userPermission => userPermission.id === userPermissionId);
+        const userPermissionToEdit: Actuator | undefined = actors.find(userPermission => userPermission.id === userPermissionId);
         setActorToEdit(userPermissionToEdit);
         setIsActorDialogVisible(true);
     };
 
-    const getActorName = (userPermission: Actor[], userPermissionID: string) => {
+    const getActorName = (userPermission: Actuator[], userPermissionID: string) => {
         const userPermissionToDelete = userPermission.find(userPermission => userPermission.id === userPermissionID);
         return userPermissionToDelete !== undefined ? userPermissionToDelete.name : '';
     };
@@ -211,15 +214,23 @@ const Actors: React.FC = () => {
             numeric: false,
             disablePadding: true,
             label: 'System',
-            isSortable: false,
+            isSortable: true,
             align: 'left'
+        },
+        {
+            id: 'type',
+            numeric: false,
+            disablePadding: true,
+            label: 'type',
+            isSortable: true,
+            align: 'center'
         },
         {
             id: 'status',
             numeric: false,
             disablePadding: true,
             label: 'Status',
-            isSortable: false,
+            isSortable: true,
             align: 'center'
         },
         {id: 'actions', numeric: false, disablePadding: true, label: 'Aktionen', isSortable: false, align: 'center'}
@@ -234,7 +245,7 @@ const Actors: React.FC = () => {
                         handleMultipleActorDeletion(selected)
                     }}
                     addFunction={() => {
-                        handleOpenDeviceDialog('add')
+                        history.push('/actors/create')
                     }}
                     tableHeading="Aktoren"
                 />
@@ -258,7 +269,7 @@ const Actors: React.FC = () => {
                         <TableBody>
                             {stableSort(actors, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((actor: Actor, index: number) => {
+                                .map((actor: Actuator, index: number) => {
                                     const isItemSelected = isSelected(actor.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -283,6 +294,12 @@ const Actors: React.FC = () => {
                                             </TableCell>
                                             <TableCell align="left" component="th" id={labelId} scope="row" padding="none">
                                                 {actor.system}
+                                            </TableCell>
+                                            <TableCell align="left" component="th" id={labelId} scope="row" padding="none">
+                                                <Chip
+                                                    icon={<PowerIcon />}
+                                                    label={actor.type === 'switch' ? 'Schalter' : actor.type}
+                                                />
                                             </TableCell>
                                             <TableCell align="center" component="th" id={labelId} scope="row" padding="none">
                                                 <Chip
@@ -356,4 +373,4 @@ const Actors: React.FC = () => {
     );
 };
 
-export default Actors;
+export default ActorOverview;

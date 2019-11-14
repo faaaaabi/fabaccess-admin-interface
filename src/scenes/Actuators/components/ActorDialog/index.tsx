@@ -5,11 +5,11 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {ActorService} from "../../../../service/ActorService";
-import {Actor} from "../../types";
+import {ActuatorService} from "../../../../service/ActuatorService";
+import {Actuator} from "../ActorOverview/types";
 
 type Props = {
-    actor?: Actor
+    actor?: Actuator
     onDialogSuccess: Function
     onDialogFailure: Function
     isOpen: boolean
@@ -18,7 +18,7 @@ type Props = {
 
 export default function ActorDialog(props: Props) {
 
-    const actorService = new ActorService();
+    const actorService = new ActuatorService();
 
     const [formValues, setFormValues] = useState({
         actorName: '',

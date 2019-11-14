@@ -6,8 +6,9 @@ export type FieldProps = {
     id: string
     name: string
     label: string
-    onChangeFunction: Function
-    onBlurFunction: Function
+    className?: string
+    onChangeFunction?: Function
+    onBlurFunction?: Function
     required: boolean
     hasError?: boolean
     errorText?: string
@@ -15,7 +16,7 @@ export type FieldProps = {
 
 const FormControlledField = (props: FieldProps) => {
     return (
-        <FormControl fullWidth={true}>
+        <FormControl fullWidth={true} className={props.className}>
             <InputLabel
                 error={props.hasError}
                 required={props.required}
@@ -31,10 +32,14 @@ const FormControlledField = (props: FieldProps) => {
                 name={props.name}
                 value={props.value}
                 onChange={(event) => {
-                    props.onChangeFunction(event)
+                    if(props.onChangeFunction) {
+                        props.onChangeFunction(event)
+                    }
                 }}
                 onBlur={(event) => {
-                    props.onBlurFunction(event)
+                    if(props.onBlurFunction) {
+                        props.onBlurFunction(event)
+                    }
                 }}
             />
             <FormHelperText error={props.hasError}>{props.errorText}</FormHelperText>

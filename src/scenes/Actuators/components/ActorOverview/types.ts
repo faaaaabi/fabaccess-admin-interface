@@ -1,6 +1,7 @@
-export type Actor = {
+export type Actuator = {
     id: string,
     name: string,
+    type: 'switch' | 'messageDriven'
     system: 'openHAB',
     status: 'online' | 'offline' | 'unknown'
 };

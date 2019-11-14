@@ -26,7 +26,7 @@ import {AppState} from "../../redux";
 import {useSelector} from "react-redux";
 import {NavigationState} from "../../redux/navigation/types";
 import Machines from "../Machines";
-import Actors from "../Actors";
+import Actors from "../Actuators";
 import Places from "../Places";
 import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";

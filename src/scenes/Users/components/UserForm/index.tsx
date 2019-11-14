@@ -228,7 +228,7 @@ export default function UserCreationForm() {
     return (isFormVisible ?
             (
                 <div className={classes.root}>
-                    <Grid container={true} spacing={4}>
+                    <Grid container={true} spacing={2}>
                         <Grid item={true} xs={true}>
                             <Paper className={classes.paper}>
                                 <Typography variant="h6" gutterBottom={true}>
