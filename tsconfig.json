@@ -20,8 +20,8 @@
     "jsx": "react"
   },
   "include": [
-    "src",
-    "node_modules/**/*.d.ts",
-    "node_modules/@types/**/*.d.ts"
+    "src"//,
+    //"node_modules/**/*.d.ts",
+    //"node_modules/@types/**/*.d.ts"
   ]
 }

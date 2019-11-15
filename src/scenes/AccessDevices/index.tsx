@@ -13,23 +13,25 @@ import {
     TableRow,
     TextField
 } from "@material-ui/core";
-import EnhancedTableToolbar from "./components/EnhancedTableToolbar";
+import EnhancedTableToolbar from "../../components/EnhancedTableToolbar";
 import EnhancedTableHead from "../../components/EhancedTableHead";
-import {getSorting, stableSort} from "./components/helperFunctions/sorting";
+import {getSorting, stableSort} from "../../utils/sorting";
 import {AccessDeviceService} from "../../service/AccessDeviceService";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {AccessDevice, ConfirmationDialogState} from "./types";
-import AddAccessDeviceDialog from "./components/AddAccessDeviceDialog";
+import AccessDeviceDialog from "./components/AddAccessDeviceDialog";
 import {useSnackbar} from 'notistack';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import useStyles from "./styles";
 import {headCell} from "../../components/EhancedTableHead/types";
-import Clipboard from 'react-clipboard.js';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import useTheme from "@material-ui/core/styles/useTheme";
 
 const AccessDevices: React.FC = () => {
-    const classes = useStyles();
+    const theme = useTheme();
+    const classes = useStyles(theme);
     const [order, setOrder] = React.useState<('asc' | 'desc')>('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState<(string)[]>([]);
@@ -53,7 +55,7 @@ const AccessDevices: React.FC = () => {
     new AccessDeviceService();
 
     const dispatch = useDispatch();
-    const pageTitle = 'Zugriffsgeräte';
+    const pageTitle = 'Zugriffsgeräte Verwalten';
 
     const accessDeviceService = new AccessDeviceService();
 
@@ -67,10 +69,12 @@ const AccessDevices: React.FC = () => {
             dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
         };
         setPageTitle(pageTitle);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         fetchAccessDevicesToState();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleRequestSort = (event: React.SyntheticEvent, property: string) => {
@@ -223,6 +227,7 @@ const AccessDevices: React.FC = () => {
                     addFunction={() => {
                         handleOpenDeviceDialog('add')
                     }}
+                    tableHeading="Zugriffsgeräte"
                 />
                 <div className={classes.tableWrapper}>
                     <Table
@@ -239,6 +244,7 @@ const AccessDevices: React.FC = () => {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={accessDevices.length}
+                            isSelectableTable={true}
                         />
                         <TableBody>
                             {stableSort(accessDevices, getSorting(order, orderBy))
@@ -265,42 +271,41 @@ const AccessDevices: React.FC = () => {
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {accessDevice.name}
-
                                             </TableCell>
                                             <TableCell align="left">
-                                                <TextField type="password"
-                                                           variant="outlined"
-                                                           value={accessDevice.apiKey}
-                                                           disabled={true}
-                                                           fullWidth={false}
-                                                           InputProps={{
-                                                               style: {
-                                                                   fontSize: 14,
-                                                               },
-                                                               endAdornment: (
-                                                                   <InputAdornment position="end">
-                                                                       <Clipboard
-                                                                           data-clipboard-text={accessDevice.apiKey}
-                                                                           onSuccess={() => onCopyToClipboardSuccess(accessDevice.name)}
-                                                                           style={{
-                                                                               border: 'none',
-                                                                               backgroundColor: 'transparent'
-                                                                           }}
-                                                                       >
-                                                                           <IconButton
-                                                                               edge="end"
-                                                                               aria-label="Api Key in die Zwischenablage kopieren"
-                                                                           >
-                                                                               <FileCopyIcon fontSize='small'/>
-                                                                           </IconButton>
-                                                                       </Clipboard>
-                                                                   </InputAdornment>
-                                                               )
-                                                           }}/>
+                                                <TextField
+                                                    type="password"
+                                                    variant="outlined"
+                                                    value={accessDevice.apiKey}
+                                                    disabled={true}
+                                                    fullWidth={false}
+                                                    InputProps={{
+                                                        style: {
+                                                            fontSize: 14,
+                                                        },
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                <CopyToClipboard
+                                                                    text={accessDevice.apiKey}
+                                                                    onCopy={() => onCopyToClipboardSuccess(accessDevice.name)}
+                                                                >
+                                                                    <IconButton
+                                                                        edge="end"
+                                                                        aria-label="Api Key in die Zwischenablage kopieren"
+                                                                    >
+                                                                        <FileCopyIcon fontSize='small'/>
+                                                                    </IconButton>
+                                                                </CopyToClipboard>
+                                                            </InputAdornment>
+                                                        )
+                                                    }}
+                                                />
                                             </TableCell>
                                             <TableCell align="center">
-                                                <IconButton aria-label="delete"
-                                                            onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}>
+                                                <IconButton
+                                                    aria-label="delete"
+                                                    onClick={() => handleOpenDeviceDialog('edit', accessDevice.id)}
+                                                >
                                                     <EditIcon/>
                                                 </IconButton>
                                                 <IconButton
@@ -342,7 +347,7 @@ const AccessDevices: React.FC = () => {
                     labelRowsPerPage='Einträge pro Seite'
                 />
             </Paper>
-            <AddAccessDeviceDialog
+            <AccessDeviceDialog
                 mode={accessDeviceDialogMode}
                 accessDeviceToEdit={accessDeviceToEdit}
                 onDialogSuccess={onAddAccessDeviceDialogSuccess}

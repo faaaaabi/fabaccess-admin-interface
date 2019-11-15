@@ -21,22 +21,23 @@ import {mainListItems, secondaryListItems} from './components/navigation';
 import style from "./style";
 import Dashboard from "../Dashboard";
 import Users from "../Users";
-import Permissions from "../Permissions";
+import UserPermissions from "../UserPermissions";
 import {AppState} from "../../redux";
 import {useSelector} from "react-redux";
 import {NavigationState} from "../../redux/navigation/types";
 import Machines from "../Machines";
-import Actors from "../Actors";
+import Actors from "../Actuators";
 import Places from "../Places";
 import AccessDevices from "../AccessDevices";
 import Bookings from "../Bookings";
 import Settings from "../Settings";
 import logo from "../../logo.svg";
-
+import useTheme from "@material-ui/core/styles/useTheme";
 
 
 const Skeleton: React.FC = () => {
-    const classes = style();
+    const theme = useTheme();
+    const classes = style(theme);
     const [open, setOpen] = React.useState(true);
 
     const handleDrawerOpen = () => {
@@ -100,8 +101,8 @@ const Skeleton: React.FC = () => {
                         <Grid container={true} spacing={3}>
                             <Route exact={true} path="/" component={Dashboard}/>
                             <Route path="/users" component={Users}/>
-                            <Route path="/userPermissions" component={Permissions}/>
-                            <Route path="/actors" component={Actors}/>
+                            <Route path="/userPermissions" component={UserPermissions}/>
+                            <Route path="/actuators" component={Actors}/>
                             <Route path="/machines" component={Machines}/>
                             <Route path="/places" component={Places}/>
                             <Route path="/accessDevices" component={AccessDevices}/>

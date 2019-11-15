@@ -4,6 +4,7 @@ import Alignment = PropTypes.Alignment;
 
 type Props = {
     classes?: any,
+    isSelectableTable?: boolean
     numSelected: number,
     onRequestSort: (event: any, property: any) => any,
     onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void,

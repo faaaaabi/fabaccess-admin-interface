@@ -1,7 +1,7 @@
 import {NavigationState, NavigationActions} from "./types";
 
 const initialState: NavigationState = {
-    pageTitle: 'asd'
+    pageTitle: ''
 };
 
 const navigationReducer = (state = initialState, action : NavigationActions) : NavigationState => {
