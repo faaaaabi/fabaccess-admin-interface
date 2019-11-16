@@ -8,6 +8,18 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {AccessDeviceService} from "../../../../service/AccessDeviceService";
 import {AccessDevice} from "../../types";
+import {InputLabel, List, ListItemIcon, ListItemText} from "@material-ui/core";
+import ListItem from "@material-ui/core/ListItem";
+import PowerIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import Divider from "@material-ui/core/Divider";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import Grid from "@material-ui/core/Grid";
+import useTheme from "@material-ui/core/styles/useTheme";
+import useStyles from "../../../Actuators/components/ActuatorCreationForm/styles";
+import {Place} from "../../../Places/types";
+import {PlacesService} from "../../../../service/PlacesService";
 
 type Props = {
     mode: 'add' | 'edit'
@@ -19,17 +31,25 @@ type Props = {
 }
 
 export default function AccessDeviceDialog(props: Props) {
-
+    const theme = useTheme();
+    const classes = useStyles(theme);
     const accessDeviceService = new AccessDeviceService();
+    const placesService = new PlacesService();
     const [accessDeviceName, setAccessDeviceName] = useState('');
+    const [selectedIndex, setSelectedIndex] = React.useState<number>(0);
+    const [allPlaces, setAllPlaces] = useState<Place[]>([]);
+    const [selectedPlace, setSelectedPlace] = useState<string>('');
 
     useEffect(() => {
         if(props.mode === 'edit' && props.accessDeviceToEdit !== undefined) {
             setAccessDeviceName(props.accessDeviceToEdit.name);
+            setSelectedPlace(props.accessDeviceToEdit.placeId as string);
         } else {
-            setAccessDeviceName('');
+            clearFormValues();
         }
+        fetchAllPlacesToState();
     }, [props]);
+
 
     const handleFormChange = (event: React.SyntheticEvent) => {
         event.persist();
@@ -38,7 +58,8 @@ export default function AccessDeviceDialog(props: Props) {
     };
 
     const clearFormValues = () => {
-        setAccessDeviceName('')
+        setAccessDeviceName('');
+        setSelectedPlace('');
     };
 
     const isFormValid = () => {
@@ -47,7 +68,7 @@ export default function AccessDeviceDialog(props: Props) {
 
     const handleAdd = async () => {
         try {
-            await accessDeviceService.addDevice(accessDeviceName);
+            await accessDeviceService.addDevice(accessDeviceName, selectedPlace);
             props.onDialogSuccess();
         } catch (e) {
             props.onDialogFailure();
@@ -56,10 +77,17 @@ export default function AccessDeviceDialog(props: Props) {
         clearFormValues();
     };
 
+    const handleListItemClick = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+        index: number,
+    ) => {
+        setSelectedIndex(index);
+    };
+
     const handleEdit = async () => {
         try {
             if(props.accessDeviceToEdit !== undefined) {
-                await accessDeviceService.editDevice(props.accessDeviceToEdit.id, accessDeviceName);
+                await accessDeviceService.editDevice(props.accessDeviceToEdit.id, accessDeviceName, selectedPlace);
                 props.onDialogSuccess();
             } else {
                 throw new Error('No accessDevice object present in props in handleEdit');
@@ -76,6 +104,10 @@ export default function AccessDeviceDialog(props: Props) {
         props.onClose();
     };
 
+    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setSelectedPlace(event.target.value as string);
+    };
+
     const submitOnEnterPressed = (event: React.KeyboardEvent, mode: 'add' | 'edit') => {
         if (event.key === 'Enter' && isFormValid()) {
             event.preventDefault();
@@ -85,7 +117,12 @@ export default function AccessDeviceDialog(props: Props) {
                 handleEdit();
             }
         }
-    }
+    };
+
+    const fetchAllPlacesToState = async () => {
+        const allPlaces = await placesService.getAllPlaces();
+        setAllPlaces(allPlaces);
+    };
 
     return (
         <div>
@@ -116,7 +153,26 @@ export default function AccessDeviceDialog(props: Props) {
                         inputProps={{
                             maxLength: 32,
                         }}
+                        style={{paddingBottom: theme.spacing(2)}}
                     />
+                    <FormControl>
+                        <InputLabel id="demo-simple-select-label">Zugewiesener Ort</InputLabel>
+                        <Select
+                            id="demo-simple-select"
+                            className={classes.select}
+                            value={selectedPlace}
+                            autoWidth={true}
+                            onChange={handleChange}
+                        >
+                            {
+                                allPlaces.map(place => {
+                                    return (
+                                        <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
+                                    )
+                                })
+                            }
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button

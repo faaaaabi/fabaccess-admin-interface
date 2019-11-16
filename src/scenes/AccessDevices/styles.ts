@@ -35,7 +35,10 @@ const useStyles = makeStyles((theme) => ({
     hiddenClipboardButton: {
         border: 'none',
         backgroundColor: 'transparent'
-    }
+    },
+    select: {
+        width: '200px'
+    },
 }));
 
 export default useStyles;

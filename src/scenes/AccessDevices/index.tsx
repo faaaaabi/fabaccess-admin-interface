@@ -28,6 +28,8 @@ import useStyles from "./styles";
 import {headCell} from "../../components/EhancedTableHead/types";
 import CopyToClipboard from 'react-copy-to-clipboard';
 import useTheme from "@material-ui/core/styles/useTheme";
+import {Place} from "../Places/types";
+import {PlacesService} from "../../service/PlacesService";
 
 const AccessDevices: React.FC = () => {
     const theme = useTheme();
@@ -50,14 +52,14 @@ const AccessDevices: React.FC = () => {
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState<boolean>(false);
     const [accessDeviceDialogMode, setAccessDeviceDialogMode] = useState<'add' | 'edit'>('add');
     const [accessDeviceToEdit, setAccessDeviceToEdit] = useState<AccessDevice | undefined>(undefined);
+    const [allPlaces, setAllPlaces] = useState<Place[]>();
     const {enqueueSnackbar} = useSnackbar();
-
-    new AccessDeviceService();
 
     const dispatch = useDispatch();
     const pageTitle = 'Zugriffsgeräte Verwalten';
 
     const accessDeviceService = new AccessDeviceService();
+    const placesService = new PlacesService();
 
     const fetchAccessDevicesToState = async () => {
         const accessDevices = await accessDeviceService.getAllAccessDevices();
@@ -74,6 +76,7 @@ const AccessDevices: React.FC = () => {
 
     useEffect(() => {
         fetchAccessDevicesToState();
+        fetchAllPlacesToState();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -203,6 +206,21 @@ const AccessDevices: React.FC = () => {
         return accessDeviceToDeleteName;
     };
 
+    const fetchAllPlacesToState = async () => {
+        const allPlaces = await placesService.getAllPlaces();
+        setAllPlaces(allPlaces);
+    };
+
+    const getPlaceName = (id: string | undefined) => {
+        if(allPlaces) {
+            const place = allPlaces.find(place => place.id === id);
+            if(place) {
+                return place.name
+            }
+        }
+        return '';
+    };
+
     const headCells: headCell[] = [
         {
             id: 'name',
@@ -213,6 +231,14 @@ const AccessDevices: React.FC = () => {
             align: 'left'
         },
         {id: 'apiKey', numeric: false, disablePadding: false, label: 'API Key', isSortable: false, align: 'left'},
+        {
+            id: 'place',
+            numeric: false,
+            disablePadding: true,
+            label: 'Zugewiesener Ort',
+            isSortable: false,
+            align: 'left'
+        },
         {id: 'actions', numeric: false, disablePadding: true, label: 'Aktionen', isSortable: false, align: 'center'}
     ];
 
@@ -249,7 +275,7 @@ const AccessDevices: React.FC = () => {
                         <TableBody>
                             {stableSort(accessDevices, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((accessDevice: any, index: number) => {
+                                .map((accessDevice: AccessDevice, index: number) => {
                                     const isItemSelected = isSelected(accessDevice.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -300,6 +326,9 @@ const AccessDevices: React.FC = () => {
                                                         )
                                                     }}
                                                 />
+                                            </TableCell>
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                                { getPlaceName(accessDevice.placeId) }
                                             </TableCell>
                                             <TableCell align="center">
                                                 <IconButton

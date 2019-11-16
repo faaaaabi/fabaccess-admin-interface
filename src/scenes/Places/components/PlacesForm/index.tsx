@@ -26,7 +26,7 @@ import Box from "@material-ui/core/Box";
 import Draggable from 'react-draggable';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import TextField from "@material-ui/core/TextField";
-
+import ClearIcon from '@material-ui/icons/Clear';
 
 export default function PlacesForm() {
     const theme = useTheme();
@@ -37,9 +37,16 @@ export default function PlacesForm() {
         description: '',
         assignedMachineIds: []
     });
-    const [machines, setMachines] = useState<Machine[]>([]);
+    const [availableMachine, setAvailableMachines] = useState<Machine[]>([]);
+    const [machinesAssignedToThisPlace, setMachinesAssignedToThisPlace] = useState<Machine[]>([]);
+    const [availableMachineIds, setAvailableMachineIds] = useState<string[]>();
+    const [allMachines, setAllMachines] = useState<Machine[]>([]);
     const [isFormValid, setIsFormValid] = useState<boolean>(false);
     const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+    const [placeToAddNameFieldError, setPlaceToAddNameFieldError] = useState({
+        hasError: false,
+        errorText: ''
+    });
 
     const {enqueueSnackbar} = useSnackbar();
     const history = useHistory();
@@ -51,11 +58,16 @@ export default function PlacesForm() {
     const dispatch = useDispatch();
     const pageTitle = id ? 'Benutzer ändern' : 'Benutzer anlegen';
 
-    const fetchMachinesToState = async () => {
+    const fetchAllMachinesToState = async () => {
+        const allMachines = await machineService.getAllMachines();
+        setAllMachines(allMachines);
+    };
+
+    const fetchAvailableMAchineIdsToState = async () => {
         const machineIdsAssignedToOtherPlace = await placesService.getAllAssignedMachineIds();
         const allMachines = await machineService.getAllMachines();
         const availableMachines = allMachines.filter(machine => machineIdsAssignedToOtherPlace.indexOf(machine.id) === -1);
-        setMachines(availableMachines)
+        setAvailableMachineIds(availableMachines.map(machine => machine.id));
     };
 
     const fetchPlaceToState = async (id: string) => {
@@ -74,18 +86,38 @@ export default function PlacesForm() {
 
     useEffect(() => {
         dispatch({type: SET_PAGE_TITLE, payload: pageTitle});
-        fetchMachinesToState();
         if (id) {
             fetchPlaceToState(id);
+            fetchAllMachinesToState();
+            fetchAvailableMAchineIdsToState();
+            debounceFormValidation(formValues.name);
         } else {
             setIsFormVisible(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        debounceFormValidation(formValues.name);
+    }, [formValues.name]);
+
     const debounceFormValidation = debounce((formField: string) => {
         setIsFormValid(formField !== '');
     }, 500);
+
+    const checkAndSetFormErrors = () => {
+        if (formValues.name === '') {
+            setPlaceToAddNameFieldError({
+                hasError: true,
+                errorText: 'Diese Feld muss ausgefüllt werden'
+            });
+        } else {
+            setPlaceToAddNameFieldError({
+                hasError: false,
+                errorText: ''
+            });
+        }
+    };
 
     const handleMachineSelection = (id: string) => {
         const selectedPlaceIndex = formValues.assignedMachineIds.indexOf(id);
@@ -108,6 +140,16 @@ export default function PlacesForm() {
             ...prevState,
             assignedMachineIds: newSelected
         }));
+
+        if(availableMachineIds) {
+            const indexToRemove = availableMachineIds.indexOf(id);
+            const availableMachineIdsCopy = availableMachineIds;
+            if (indexToRemove > -1) {
+                availableMachineIdsCopy.splice(indexToRemove, 1);
+            }
+            setAvailableMachineIds(availableMachineIdsCopy);
+        }
+
     };
 
     const isMachineSelected = (id: string) => formValues.assignedMachineIds.indexOf(id) !== -1;
@@ -119,11 +161,15 @@ export default function PlacesForm() {
             ...oldFormValues,
             [input.name]: input.value
         }));
-        debounceFormValidation(input.value);
+        //debounceFormValidation(input.value);
     };
 
     const handleFormValidation = (event: React.SyntheticEvent) => {
         event.preventDefault();
+    };
+
+    const handleOnBlur = () => {
+        checkAndSetFormErrors();
     };
 
     const handleSubmit = async () => {
@@ -144,7 +190,25 @@ export default function PlacesForm() {
                 enqueueSnackbar('Fehler beim Anlegen des Ortes', {variant: 'error'});
             }
         }
+    };
 
+    const removeAssignedMachine = (id: string) => {
+        console.log('machineIdToDelte:', id);
+        const assignedMachineIds = formValues.assignedMachineIds;
+        const indexToRemove = assignedMachineIds.indexOf(id);
+        if (indexToRemove > -1) {
+            assignedMachineIds.splice(indexToRemove, 1);
+        }
+        setFormValues(prevState => ({
+            ...prevState,
+            assignedMachineIds
+        }))
+
+        const availableMachineIdsCopy = availableMachineIds;
+        if(availableMachineIdsCopy) {
+            availableMachineIdsCopy.push(id);
+            setAvailableMachineIds(availableMachineIdsCopy);
+        }
 
     };
 
@@ -174,9 +238,9 @@ export default function PlacesForm() {
                                             label="Name des Ortes"
                                             required={true}
                                             onChangeFunction={(event: React.SyntheticEvent) => handleFormChange(event)}
-                                            onBlurFunction={(event: React.SyntheticEvent) => handleFormValidation(event)}
-                                            hasError={false}
-                                            errorText=''
+                                            onBlurFunction={handleOnBlur}
+                                            hasError={placeToAddNameFieldError.hasError}
+                                            errorText={placeToAddNameFieldError.errorText}
                                         />
                                     </Grid>
                                     <Grid item={true}>
@@ -205,7 +269,13 @@ export default function PlacesForm() {
                                 </Typography>
                                 <Grid item={true} style={{height: '360px', overflowY: 'auto'}}>
                                     <List dense={true} className={classes.list}>
-                                        {machines.map(machine => {
+                                        {allMachines
+                                            .filter(machine => {
+                                                if(availableMachineIds) {
+                                                    return availableMachineIds.indexOf(machine.id) !== -1
+                                                }
+                                            })
+                                            .map(machine => {
                                             const labelId = `checkbox-list-secondary-label-${machine}`;
                                             return (
                                                 <ListItem
@@ -219,14 +289,6 @@ export default function PlacesForm() {
                                                         </Avatar>
                                                     </ListItemAvatar>
                                                     <ListItemText id={labelId} primary={machine.name}/>
-                                                    <ListItemSecondaryAction>
-                                                        <Checkbox
-                                                            edge="end"
-                                                            onChange={() => handleMachineSelection(machine.id)}
-                                                            checked={isMachineSelected(machine.id)}
-                                                            inputProps={{'aria-labelledby': labelId}}
-                                                        />
-                                                    </ListItemSecondaryAction>
                                                 </ListItem>
                                             );
                                         })}
@@ -242,19 +304,30 @@ export default function PlacesForm() {
                                         Work in progress!!
                                     </Box>
                                 </Typography>
-                                <Grid  container={true} direction="row" justify="space-between" style={{position: 'relative', height: '400px'}}>
-                                    { formValues.assignedMachineIds.map(( machineId, index) => {
-                                        return (
-                                                <Draggable
-                                                    key={machineId}
-                                                    bounds='parent'
-                                                    grid={[12,12]}
-                                                    //position={{x: 0+25*index, y: 0}}
-                                                >
-                                                    <div className={classes.box}>{machines[machines.findIndex(machine => machine.id === machineId)].name}</div>
-                                                </Draggable>
-                                        )
-                                    })
+                                <Grid container={true} direction="row" justify="space-between"
+                                      style={{position: 'relative', height: '400px'}}>
+                                    {
+                                        allMachines.map(machine => {
+                                            if(formValues.assignedMachineIds.indexOf(machine.id) !== -1) {
+                                                return (
+                                                    <Draggable
+                                                        key={machine.id}
+                                                        bounds='parent'
+                                                        grid={[12, 12]}
+                                                        //position={{x: 0+25*index, y: 0}}
+                                                    >
+                                                        <div className={classes.boxHighlighted}>
+                                                            <ClearIcon
+                                                                fontSize='small'
+                                                                color='secondary'
+                                                                onClick={() => removeAssignedMachine(machine.id)}
+                                                            />
+                                                            <p>{machine.name}</p>
+                                                        </div>
+                                                    </Draggable>
+                                                )
+                                            }
+                                        })
                                     }
                                 </Grid>
                             </Paper>
@@ -275,7 +348,7 @@ export default function PlacesForm() {
                                 color="secondary"
                                 style={{float: "right"}}
                                 onClick={(event: React.SyntheticEvent<HTMLElement>) => {
-                                    history.push('/users')
+                                    history.push('/places')
                                 }}
                                 className={classes.button}
                             >

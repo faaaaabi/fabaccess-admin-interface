@@ -1,7 +1,8 @@
 export type AccessDevice = {
     id: string,
     name: string,
-    apiKey: string
+    apiKey: string,
+    placeId?: string
 };
 
 export type ConfirmationDialogState = {

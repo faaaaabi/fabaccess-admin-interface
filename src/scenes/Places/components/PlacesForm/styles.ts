@@ -37,7 +37,18 @@ const useStyles = makeStyles((theme) => ({
         margin: '10px',
         padding: '10px',
         float: 'left',
-    }
+    },
+    boxHighlighted: {
+        backgroundColor: 'c3c3c3',
+        border: '1px solid #999',
+        borderRadius: '3px',
+        width: '100px',
+        height: '100px',
+        fontSize: '80%',
+        margin: '10px',
+        padding: '10px',
+        float: 'left',
+    },
 }));
 
 export default useStyles;

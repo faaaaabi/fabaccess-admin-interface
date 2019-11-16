@@ -85,4 +85,10 @@ export class PlacesService {
         const storedPlaces: Place[] = await this.getAllPlaces();
         return storedPlaces.flatMap(place => place.assignedMachineIds)
     }
+
+    async getAssignedMachineIdsByPlaceId(placeId: string): Promise<string[]> {
+        const storedPlaces: Place[] = await this.getAllPlaces();
+        const requestedPlace = storedPlaces.find(place => place.id === placeId);
+        return requestedPlace ? requestedPlace.assignedMachineIds : []
+    }
 }

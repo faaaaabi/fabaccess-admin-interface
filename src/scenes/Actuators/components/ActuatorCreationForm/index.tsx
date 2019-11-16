@@ -254,7 +254,7 @@ const ActuatorCreationForm: React.FC = () => {
                 color="secondary"
                 style={{float: "right"}}
                 onClick={(event: React.SyntheticEvent<HTMLElement>) => {
-                    history.push('/actors')
+                    history.push('/actuators')
                 }}
                 className={classes.button}
             >

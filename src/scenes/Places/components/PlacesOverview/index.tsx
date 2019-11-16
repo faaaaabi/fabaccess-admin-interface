@@ -239,7 +239,7 @@ const PlacesOverview: React.FC = () => {
                                             <TableCell align="center">
                                                 <IconButton
                                                     aria-label="delete"
-                                                    //onClick={() => history.push(`/places/edit/${place.id}`)}
+                                                    onClick={() => history.push(`/places/edit/${place.id}`)}
                                                 >
                                                     <EditIcon/>
                                                 </IconButton>
