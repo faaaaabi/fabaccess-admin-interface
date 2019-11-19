@@ -1,4 +1,5 @@
 # FabAccess Admin Interface
+Admin-Interface for https://github.com/faaaaabi/fablab-api-gateway. Demo available at https://fabaccess.bian-meyer.de
 
 ## Setup Node.js
 
@@ -46,3 +47,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+## LICENSE
+MIT - see LICENSE file
