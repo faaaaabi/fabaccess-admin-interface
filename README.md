@@ -1,6 +1,8 @@
 # FabAccess Admin Interface
 Admin-Interface for https://github.com/faaaaabi/fablab-api-gateway. Demo available at https://fabaccess.bian-meyer.de
 
+**Note: This work in progress. Everything is still in flux and things may not work as expected**
+
 ## Setup Node.js
 
 Node.js >= 12.11.1 is recommended
